@@ -7,26 +7,16 @@ import {
   BarChart3, 
   Users, 
   Menu, 
-  X, 
   Bell,
-  Settings,
-  LogOut,
-  TrendingUp,
-  Clock,
   Smile,
   Brain,
-  Shield,
-  ChevronRight,
-  Star,
-  Zap,
   Sun,
   Moon,
   Coffee,
-  Target,
-  Award,
-  Plus,
   ArrowRight
 } from 'lucide-react';
+import Sidebar from './Sidebar';
+import BookCounselor from './BookCounselor';
 
 const Sahay = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -47,14 +37,6 @@ const Sahay = () => {
 
   const greeting = getGreeting();
 
-  const menuItems = [
-    { id: 'dashboard', icon: BarChart3, label: 'Dashboard', color: 'bg-[#3d9098]' },
-    { id: 'assessment', icon: Heart, label: 'Self Assessment', color: 'bg-[#f99c5b]' },
-    { id: 'resources', icon: BookOpen, label: 'Resources', color: 'bg-[#cab2cb]' },
-    { id: 'chatbot', icon: MessageCircle, label: 'AI Support', color: 'bg-[#9ea9a9]' },
-    { id: 'booking', icon: Calendar, label: 'Book Counselor', color: 'bg-[#d8c1ad]' },
-    { id: 'community', icon: Users, label: 'Peer Support', color: 'bg-[#7d7074]' },
-  ];
 
   const quickActions = [
     {
@@ -83,45 +65,35 @@ const Sahay = () => {
     }
   ];
 
-  const statsCards = [
-    { label: 'Wellness Score', value: '8.2', unit: '/10', icon: Target, bgColor: 'bg-[#2ec3ca]', change: '+0.5' },
-    { label: 'Daily Streak', value: '12', unit: 'days', icon: Zap, bgColor: 'bg-[#eac163]', change: '+1' },
-    { label: 'Sessions Done', value: '24', unit: 'total', icon: Award, bgColor: 'bg-[#f38788]', change: '+3' },
+  const articles = [
+    {
+      title: 'Managing Exam Stress: A Practical Guide',
+      image: 'https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?q=80&w=1200&auto=format&fit=crop',
+      tag: 'Article',
+      readTime: '6 min',
+      href: '#'
+    },
+    {
+      title: 'Sleep Hygiene for Better Mental Health',
+      image: 'https://images.unsplash.com/photo-1517673400267-0251440c45dc?q=80&w=1200&auto=format&fit=crop',
+      tag: 'Blog',
+      readTime: '4 min',
+      href: '#'
+    },
+    {
+      title: 'Mindfulness in 5 Minutes: Daily Routine',
+      image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1200&auto=format&fit=crop',
+      tag: 'Article',
+      readTime: '5 min',
+      href: '#'
+    }
   ];
 
-  const recentActivity = [
-    { 
-      type: 'Mood Check-in', 
-      description: 'Feeling good today - 8/10',
-      time: '2 hours ago', 
-      icon: Heart, 
-      bgColor: 'bg-[#e1d1c9]',
-      iconColor: 'text-[#ab5275]'
-    },
-    { 
-      type: 'Resource Read', 
-      description: 'Completed "Managing Exam Stress"',
-      time: '1 day ago', 
-      icon: BookOpen, 
-      bgColor: 'bg-[#fbecb3]',
-      iconColor: 'text-[#eac163]'
-    },
-    { 
-      type: 'AI Chat', 
-      description: 'Discussed anxiety coping strategies',
-      time: '2 days ago', 
-      icon: MessageCircle, 
-      bgColor: 'bg-[#cdbdd4]',
-      iconColor: 'text-[#4e4f65]'
-    },
-    { 
-      type: 'Peer Group', 
-      description: 'Joined study stress support group',
-      time: '3 days ago', 
-      icon: Users, 
-      bgColor: 'bg-[#b7c0d0]',
-      iconColor: 'text-[#3d9098]'
-    },
+  const hubResources = [
+    { title: 'CBT Basics', desc: 'Understand cognitive behavioral techniques', lang: 'English', href: '#' },
+    { title: 'Anxiety Toolkit', desc: 'Grounding, journaling, breathing', lang: 'Hindi', href: '#' },
+    { title: 'Depression Self-care', desc: 'Small steps that help', lang: 'English', href: '#' },
+    { title: 'Study Burnout', desc: 'Recognize and recover', lang: 'English', href: '#' },
   ];
 
   const featuredResources = [
@@ -153,160 +125,59 @@ const Sahay = () => {
 
   return (
     <div className="min-h-screen bg-[#eaf1f5]">
-      {/* Mobile overlay */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-30 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <div className={`fixed left-0 top-0 h-full w-72 bg-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out flex flex-col ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } lg:translate-x-0`}>
-        <div className="p-6 border-b" style={{borderColor:'#c8ced1'}}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-[#3d9098] rounded-2xl flex items-center justify-center">
-                <Shield className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-[#2e2f34]">Sahay</h1>
-                <p className="text-sm text-[#8d949d]">Mental Wellness Hub</p>
-              </div>
-            </div>
-            <button 
-              onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-2 rounded-lg hover:bg-[#f2f7eb] transition-colors"
-              aria-label="Close sidebar"
-              title="Close menu"
-            >
-              <Menu className="w-5 h-5 text-[#2e2f34]" />
-            </button>
-          </div>
-        </div>
-
-        <nav className="p-4 space-y-2 overflow-y-auto flex-1">
-          {menuItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => {
-                setSelectedFeature(item.id);
-                setSidebarOpen(false);
-              }}
-              className={`w-full flex items-center space-x-4 px-4 py-4 rounded-2xl transition-all duration-200 ${
-                selectedFeature === item.id 
-                  ? 'bg-[#e1d1c9] text-[#2e2f34] shadow-sm' 
-                  : 'text-[#767272] hover:bg-[#fbf1ea] hover:text-[#2e2f34]'
-              }`}
-            >
-              <div className={`w-10 h-10 ${selectedFeature === item.id ? 'bg-[#3d9098]' : item.color} rounded-xl flex items-center justify-center transition-colors`}>
-                <item.icon className="w-5 h-5 text-white" />
-              </div>
-              <span className="font-semibold">{item.label}</span>
-            </button>
-          ))}
-        </nav>
-
-        <div className="mt-auto p-4 pt-0 space-y-2">
-          <button className="w-full flex items-center space-x-3 px-4 py-3 text-[#767272] hover:bg-[#f2f7eb] rounded-2xl transition-colors">
-            <div className="w-8 h-8 bg-[#b7c0d0] rounded-lg flex items-center justify-center">
-              <Settings className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-medium">Settings</span>
-          </button>
-          <button className="w-full flex items-center space-x-3 px-4 py-3 text-[#ab5275] hover:bg-[#cdbdd4] rounded-2xl transition-colors">
-            <div className="w-8 h-8 bg-[#f38788] rounded-lg flex items-center justify-center">
-              <LogOut className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-medium">Logout</span>
-          </button>
-        </div>
-      </div>
+      <Sidebar 
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+        selectedFeature={selectedFeature}
+        setSelectedFeature={setSelectedFeature}
+      />
 
       {/* Main content */}
       <div className="lg:ml-72 min-h-screen">
-        {/* Header */}
+        {/* Header (hidden on booking page) */}
+        {selectedFeature !== 'booking' && (
         <header className="bg-white border-b sticky top-0 z-30" style={{borderColor:'#c8ced1'}}>
-          <div className="px-6 py-6 flex items-center justify-between">
+          <div className="px-6 py-5 flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-3 rounded-xl transition-colors"
+                className="lg:hidden p-2.5 rounded-lg transition-colors"
                 style={{background:'#c8ced1'}}
               >
-                <Menu className="w-6 h-6 text-[#2e2f34]" />
+                <Menu className="w-5 h-5 text-[#2e2f34]" />
               </button>
               <div>
                 <div className="flex items-center space-x-3 mb-1">
-                  <div className="w-8 h-8 bg-[#fbecb3] rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-[#fbecb3] rounded-lg flex items-center justify-center">
                     <greeting.icon className="w-5 h-5 text-[#eac163]" />
                   </div>
-                  <h2 className="text-3xl font-bold text-[#2e2f34]">{greeting.text}, Student!</h2>
+                  <h2 className="text-2xl font-bold text-[#2e2f34]">{greeting.text}, Student!</h2>
                 </div>
-                <p className="text-lg text-[#767272]">How are you feeling today?</p>
+                <p className="text-base text-[#767272]">How are you feeling today?</p>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <button className="relative p-3 rounded-2xl bg-[#2dc8ca] hover:opacity-90 transition-colors group">
-                <Bell className="w-6 h-6 text-white" />
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#f38788] rounded-full flex items-center justify-center">
+            <div className="flex items-center space-x-3">
+              <button className="relative p-2.5 rounded-lg bg-[#2dc8ca] hover:opacity-90 transition-colors group">
+                <Bell className="w-5 h-5 text-white" />
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#f38788] rounded-full flex items-center justify-center">
                   <span className="text-white text-xs font-bold">3</span>
                 </span>
               </button>
-              <div className="w-12 h-12 bg-[#7d7074] rounded-2xl flex items-center justify-center cursor-pointer hover:opacity-90 transition-colors">
-                <span className="text-white font-bold text-lg">A</span>
+              <div className="w-10 h-10 bg-[#7d7074] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-90 transition-colors">
+                <span className="text-white font-bold text-sm">A</span>
               </div>
             </div>
           </div>
         </header>
+        )}
 
-        {/* Dashboard Content */}
+        {/* Main Content */}
         <main className="p-6 space-y-8">
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {statsCards.map((stat, index) => (
-              <div key={index} className="bg-white rounded-3xl p-6 shadow-sm border hover:shadow-md transition-shadow" style={{borderColor:'#c8ced1'}}>
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`w-12 h-12 ${stat.bgColor} rounded-2xl flex items-center justify-center`}>
-                    <stat.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="flex items-center text-sm font-bold px-3 py-1 rounded-full" style={{color:'#889260', background:'#f2f7eb'}}>
-                    <TrendingUp className="w-3 h-3 mr-1" />
-                    {stat.change}
-                  </div>
-                </div>
-                <div className="text-3xl font-bold text-[#2e2f34] mb-1">
-                  {stat.value}<span className="text-lg text-[#8d949d] font-normal">{stat.unit}</span>
-                </div>
-                <div className="text-[#767272] text-sm font-medium">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Wellness Score Highlight */}
-          <div className="bg-white rounded-3xl p-8 shadow-sm border" style={{borderColor:'#c8ced1'}}>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="text-2xl font-bold text-[#2e2f34] mb-2">Your Wellness Journey</h3>
-                <p className="text-[#767272]">You're doing great! Keep up the momentum.</p>
-              </div>
-              <div className="text-right">
-                <div className="text-5xl font-bold text-[#2dc8ca] mb-1">8.2</div>
-                <div className="text-[#8d949d] font-medium">Wellness Score</div>
-              </div>
-            </div>
-            <div className="w-full rounded-full h-4 overflow-hidden" style={{background:'#c8ced1'}}>
-              <div className="bg-[#2dc8ca] h-4 rounded-full transition-all duration-1000 ease-out" style={{width: '82%'}}></div>
-            </div>
-            <div className="flex justify-between text-sm text-[#8d949d] mt-2">
-              <span>Needs attention</span>
-              <span>Excellent</span>
-            </div>
-          </div>
-
-          {/* Quick Actions */}
+          {selectedFeature === 'booking' ? (
+            <BookCounselor onBack={() => setSelectedFeature('dashboard')} />
+          ) : selectedFeature === 'dashboard' ? (
+            <>
+          {/* Quick Actions - refined styling */}
           <div>
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-2xl font-bold text-[#2e2f34]">Quick Actions</h3>
@@ -316,18 +187,21 @@ const Sahay = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {quickActions.map((action, index) => (
-                <div key={index} className="bg-white rounded-3xl p-6 shadow-sm border hover:shadow-md transition-all duration-200 group cursor-pointer" style={{borderColor:'#c8ced1'}}>
-                  <div className="flex items-start justify-between mb-4">
-                    <div className={`w-12 h-12 ${action.bgColor} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                <div key={index} className="bg-white rounded-xl p-5 shadow-sm border hover:shadow-md transition-all duration-200 group cursor-pointer" style={{borderColor:'#c8ced1'}}>
+                  <div className="flex items-start justify-between mb-3">
+                    <div className={`w-10 h-10 ${action.bgColor} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform`}>
                       <action.icon className="w-6 h-6 text-white" />
                     </div>
                     <div className="text-right">
                       <div className="text-[#8d949d] text-xs font-medium">{action.time}</div>
                     </div>
                   </div>
-                  <h4 className="font-bold text-[#2e2f34] text-lg mb-2">{action.title}</h4>
-                  <p className="text-[#767272] text-sm mb-4">{action.subtitle}</p>
-                  <button className="w-full bg-[#f2f7eb] hover:bg-[#eaf1f5] text-[#2e2f34] font-semibold py-3 rounded-2xl transition-colors flex items-center justify-center group-hover:bg-[#e1d1c9] group-hover:text-[#3d9098]">
+                  <h4 className="font-bold text-[#2e2f34] text-base mb-1">{action.title}</h4>
+                  <p className="text-[#767272] text-sm mb-3">{action.subtitle}</p>
+                  <button 
+                    onClick={() => action.title === 'Book Session' ? setSelectedFeature('booking') : null}
+                    className="w-full bg-[#f2f7eb] hover:bg-[#eaf1f5] text-[#2e2f34] font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center group-hover:bg-[#e1d1c9] group-hover:text-[#3d9098]"
+                  >
                     {action.action}
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </button>
@@ -336,73 +210,104 @@ const Sahay = () => {
             </div>
           </div>
 
-          {/* Recent Activity & Resources Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Recent Activity */}
-            <div className="bg-white rounded-3xl p-6 shadow-sm border" style={{borderColor:'#c8ced1'}}>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-[#2e2f34]">Recent Activity</h3>
-                <button className="text-[#2dc8ca] text-sm font-semibold">View all</button>
-              </div>
-              <div className="space-y-4">
-                {recentActivity.map((activity, index) => (
-                  <div key={index} className="flex items-start space-x-4 p-3 rounded-2xl hover:bg-gray-50 transition-colors cursor-pointer">
-                    <div className={`w-10 h-10 ${activity.bgColor} rounded-xl flex items-center justify-center flex-shrink-0`}>
-                      <activity.icon className={`w-5 h-5 ${activity.iconColor}`} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <p className="text-[#2e2f34] font-semibold text-sm">{activity.type}</p>
-                        <span className="text-[#8d949d] text-xs">{activity.time}</span>
-                      </div>
-                      <p className="text-[#767272] text-sm mt-1">{activity.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Featured Resources */}
-            <div className="bg-white rounded-3xl p-6 shadow-sm border" style={{borderColor:'#c8ced1'}}>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-[#2e2f34]">Featured Resources</h3>
+          {/* Articles & Blogs with images + Psychoeducational Hub + Upcoming Sessions */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Articles & Blogs */}
+            <div className="lg:col-span-2 space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-2xl font-bold text-[#2e2f34]">Articles & Blogs</h3>
                 <button className="text-[#2dc8ca] text-sm font-semibold">Browse all</button>
               </div>
-              <div className="space-y-4">
-                {featuredResources.map((resource, index) => (
-                  <div key={index} className={`p-4 ${resource.bgColor} rounded-2xl cursor-pointer hover:shadow-sm transition-shadow group`}>
-                    <div className="flex items-start justify-between mb-2">
-                      <span className={`text-xs font-bold ${resource.iconColor} bg-white px-2 py-1 rounded-full`}>
-                        {resource.category}
-                      </span>
-                      <span className="text-[#8d949d] text-xs">{resource.readTime}</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {articles.map((a, i) => (
+                  <a key={i} href={a.href} className="group block bg-white border rounded-xl overflow-hidden hover:shadow-md transition-shadow" style={{borderColor:'#c8ced1'}}>
+                    <div className="h-40 w-full overflow-hidden">
+                      <img src={a.image} alt={a.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     </div>
-                    <h4 className="font-bold text-[#2e2f34] mb-1 group-hover:text-[#3d9098] transition-colors">{resource.title}</h4>
-                    <p className="text-[#767272] text-sm">{resource.description}</p>
-                  </div>
+                    <div className="p-4">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-semibold px-2 py-0.5 rounded" style={{background:'#eaf1f5', color:'#3d9098'}}>{a.tag}</span>
+                        <span className="text-xs" style={{color:'#8d949d'}}>{a.readTime}</span>
+                      </div>
+                      <h4 className="font-semibold text-[#2e2f34]">{a.title}</h4>
+                    </div>
+                  </a>
                 ))}
               </div>
-            </div>
-          </div>
 
-          {/* Community Highlight */}
-          <div className="bg-[#2dc8ca] rounded-3xl p-8 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-2xl font-bold mb-3">Join Our Peer Support Community</h3>
-                <p className="text-[#fbecb3] text-lg mb-6">Connect with fellow students in a safe, supportive space</p>
-                <button className="bg-white text-[#2dc8ca] px-8 py-3 rounded-2xl font-bold hover:bg-[#f2f7eb] transition-colors flex items-center">
-                  Join Community
-                  <Users className="w-5 h-5 ml-2" />
-                </button>
-              </div>
-              <div className="hidden md:block">
-                <div className="w-24 h-24 bg-[#a0b4bb] rounded-3xl flex items-center justify-center">
-                  <Users className="w-12 h-12 text-white" />
+              {/* Psychoeducational Hub */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-2xl font-bold text-[#2e2f34]">Psychoeducational Hub</h3>
+                  <button className="text-[#2dc8ca] text-sm font-semibold">See library</button>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
+                  {hubResources.map((r, i) => (
+                    <a key={i} href={r.href} className="block bg-white border rounded-xl p-4 hover:shadow-md transition-shadow" style={{borderColor:'#c8ced1'}}>
+                      <h4 className="font-semibold text-[#2e2f34] mb-1">{r.title}</h4>
+                      <p className="text-sm" style={{color:'#767272'}}>{r.desc}</p>
+                      <div className="text-xs mt-2" style={{color:'#8d949d'}}>{r.lang}</div>
+                    </a>
+                  ))}
                 </div>
               </div>
             </div>
+
+            {/* Upcoming Sessions */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-2xl font-bold text-[#2e2f34]">Upcoming Sessions</h3>
+                <button className="text-[#2dc8ca] text-sm font-semibold">Manage</button>
+              </div>
+              <div className="bg-white border rounded-xl p-4 space-y-4" style={{borderColor:'#c8ced1'}}>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-sm" style={{color:'#8d949d'}}>Tomorrow • 2:00 PM</p>
+                    <p className="font-semibold text-[#2e2f34]">Counseling with Dr. A</p>
+                  </div>
+                  <button className="text-sm px-3 py-1 rounded border" style={{borderColor:'#c8ced1', color:'#2e2f34'}}>Reschedule</button>
+                </div>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-sm" style={{color:'#8d949d'}}>Fri • 11:30 AM</p>
+                    <p className="font-semibold text-[#2e2f34]">Peer Group: Study Stress</p>
+                  </div>
+                  <button className="text-sm px-3 py-1 rounded border" style={{borderColor:'#c8ced1', color:'#2e2f34'}}>View</button>
+                </div>
+                <button 
+                  onClick={() => setSelectedFeature('booking')}
+                  className="w-full bg-[#2dc8ca] text-white py-2.5 rounded-lg font-semibold hover:opacity-90"
+                >
+                  Book New Session
+                </button>
+              </div>
+            </div>
           </div>
+
+              {/* Community Highlight */}
+              <div className="bg-[#2dc8ca] rounded-xl p-8 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-2xl font-bold mb-3">Join Our Peer Support Community</h3>
+                    <p className="text-[#fbecb3] text-lg mb-6">Connect with fellow students in a safe, supportive space</p>
+                    <button className="bg-white text-[#2dc8ca] px-8 py-3 rounded-lg font-bold hover:bg-[#f2f7eb] transition-colors flex items-center">
+                      Join Community
+                      <Users className="w-5 h-5 ml-2" />
+                    </button>
+                  </div>
+                  <div className="hidden md:block">
+                    <div className="w-24 h-24 bg-[#a0b4bb] rounded-xl flex items-center justify-center">
+                      <Users className="w-12 h-12 text-white" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex items-center justify-center h-64">
+              <p className="text-[#767272] text-lg">Feature coming soon...</p>
+            </div>
+          )}
         </main>
       </div>
     </div>
