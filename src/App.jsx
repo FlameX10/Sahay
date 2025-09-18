@@ -10,7 +10,7 @@ import DailyCheckIn from './Components/DailyCheckIn'
 import PsychoeducationalResourceHub from './Components/PsychoeducationalResourceHub'
 import AdminDashboard from './Components/AdminDashboard'
 import ManageCounselors from './Components/ManageCounselors'
-
+import PeerSupportManagement from './Components/PeerSupportManagement'
 function App() {
   return (
     <Router>
@@ -26,6 +26,7 @@ function App() {
         {/* Admin Side */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/counselors" element={<ManageCounselors />} />
+        <Route path="/admin/peer-support" element={<PeerSupportManagement />} />
       </Routes>
     </Router>
     

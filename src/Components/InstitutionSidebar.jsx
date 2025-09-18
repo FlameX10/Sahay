@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   Heart, 
   Building,
@@ -9,29 +10,41 @@ import {
   Calendar,
   BookOpen,
   Shield,
-  Settings
+  Settings,
+  LogOut
 } from 'lucide-react';
 
 const InstitutionSidebar = ({ sidebarOpen, setSidebarOpen }) => {
-  // Sidebar navigation items are now defined directly in the component
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { pathname } = location;
+
+  // Navigation items, 'Settings' is handled separately at the bottom
   const sidebarItems = [
-    { icon: BarChart3, label: 'Dashboard', active: true, href: '#' },
-    { icon: Users, label: 'Student Analytics', href: '#' },
-    { icon: UserPlus, label: 'Manage Counselors', href: '#' },
-    { icon: MessageSquare, label: 'Create Community', href: '#' },
-    { icon: Calendar, label: 'Appointments', href: '#' },
-    { icon: BookOpen, label: 'Resource Hub', href: '#' },
-    { icon: Shield, label: 'Moderation', href: '#' },
-    { icon: Settings, label: 'Settings', href: '#' }
+    { icon: BarChart3, label: 'Dashboard', href: '/admin/dashboard' },
+    { icon: MessageSquare, label: 'Peer Support', href: '/admin/peer-support' },
+    { icon: UserPlus, label: 'Manage Counselors', href: '/admin/counselors' },
+    { icon: Users, label: 'Student Analytics', href: '/admin/analytics' },
+    { icon: Calendar, label: 'Appointments', href: '/admin/appointments' },
+    { icon: BookOpen, label: 'Resource Hub', href: '/admin/resources' },
+    { icon: Shield, label: 'Moderation', href: '/admin/moderation' },
   ];
+
+  const handleNavigate = (path) => {
+    navigate(path);
+    // On smaller screens, close the sidebar after navigation
+    if (window.innerWidth < 1024) { 
+        setSidebarOpen(false);
+    }
+  };
 
   return (
     <>
       {/* Sidebar */}
       <div
-        className={`w-72 bg-white border-r flex-shrink-0 z-50 lg:z-auto ${
-          sidebarOpen ? 'fixed inset-y-0 left-0' : 'hidden'
-        } lg:static lg:block`}
+        className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r flex flex-col transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          lg:static lg:translate-x-0 flex-shrink-0`}
         style={{ borderColor: '#c8ced1' }}
       >
         <div className="flex items-center justify-between p-6 border-b" style={{ borderColor: '#c8ced1' }}>
@@ -63,25 +76,56 @@ const InstitutionSidebar = ({ sidebarOpen, setSidebarOpen }) => {
         </div>
 
         {/* Navigation */}
-        <nav className="p-4">
+        <nav className="p-4 flex-1 overflow-y-auto">
           <ul className="space-y-2">
-            {sidebarItems.map((item, index) => (
-              <li key={index}>
-                <a
-                  href={item.href}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
-                    item.active
-                      ? 'bg-[#2dc8ca] text-white'
-                      : 'text-[#767272] hover:bg-[#f2f7eb] hover:text-[#2e2f34]'
-                  }`}
-                >
-                  <item.icon className="w-5 h-5" />
-                  <span className="font-medium">{item.label}</span>
-                </a>
-              </li>
-            ))}
+            {sidebarItems.map((item, index) => {
+              const isActive = pathname === item.href;
+              return (
+                <li key={index}>
+                  <button
+                    onClick={() => handleNavigate(item.href)}
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-left ${
+                      isActive
+                        ? 'bg-[#2dc8ca] text-white'
+                        : 'text-[#767272] hover:bg-[#f2f7eb] hover:text-[#2e2f34]'
+                    }`}
+                  >
+                    <item.icon className="w-5 h-5" />
+                    <span className="font-medium">{item.label}</span>
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         </nav>
+        
+        {/* Bottom Section: Settings & Logout */}
+        <div className="p-4 border-t" style={{borderColor: '#c8ced1'}}>
+           <ul className="space-y-2">
+              <li>
+                <button
+                    onClick={() => handleNavigate('/admin/settings')}
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-left ${
+                        pathname === '/admin/settings'
+                        ? 'bg-[#2dc8ca] text-white'
+                        : 'text-[#767272] hover:bg-[#f2f7eb] hover:text-[#2e2f34]'
+                    }`}
+                  >
+                    <Settings className="w-5 h-5" />
+                    <span className="font-medium">Settings</span>
+                </button>
+              </li>
+              <li>
+                 <button
+                    onClick={() => handleNavigate('/login')} // Logs out and goes to login page
+                    className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-[#ab5275] hover:bg-[#cdbdd4]"
+                  >
+                    <LogOut className="w-5 h-5" />
+                    <span className="font-medium">Logout</span>
+                </button>
+              </li>
+           </ul>
+        </div>
       </div>
 
       {/* Overlay for mobile */}
@@ -96,3 +140,4 @@ const InstitutionSidebar = ({ sidebarOpen, setSidebarOpen }) => {
 };
 
 export default InstitutionSidebar;
+
