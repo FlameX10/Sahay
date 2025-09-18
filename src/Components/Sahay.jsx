@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   Heart, 
   BookOpen, 
@@ -16,11 +17,11 @@ import {
   ArrowRight
 } from 'lucide-react';
 import Sidebar from './Sidebar';
-import BookCounselor from './BookCounselor';
 
 const Sahay = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [selectedFeature, setSelectedFeature] = useState('dashboard');
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -40,6 +41,7 @@ const Sahay = () => {
 
   const quickActions = [
     {
+      id: 'checkin',
       title: 'Daily Check-in',
       subtitle: 'How are you feeling today?',
       icon: Smile,
@@ -48,6 +50,7 @@ const Sahay = () => {
       time: '2 minutes'
     },
     {
+      id: 'chatbot',
       title: 'AI Companion',
       subtitle: 'Chat with your wellness buddy',
       icon: Brain,
@@ -56,6 +59,7 @@ const Sahay = () => {
       time: 'Available 24/7'
     },
     {
+      id: 'booking',
       title: 'Book Session',
       subtitle: 'Talk to a counselor',
       icon: Calendar,
@@ -128,14 +132,12 @@ const Sahay = () => {
       <Sidebar 
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
-        selectedFeature={selectedFeature}
-        setSelectedFeature={setSelectedFeature}
       />
 
       {/* Main content */}
       <div className="lg:ml-72 min-h-screen">
-        {/* Header (hidden on booking page) */}
-        {selectedFeature !== 'booking' && (
+        {/* Header (hidden on booking and checkin pages) */}
+        {!['/booking', '/checkin'].includes(location.pathname) && (
         <header className="bg-white border-b sticky top-0 z-30" style={{borderColor:'#c8ced1'}}>
           <div className="px-6 py-5 flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -173,10 +175,6 @@ const Sahay = () => {
 
         {/* Main Content */}
         <main className="p-6 space-y-8">
-          {selectedFeature === 'booking' ? (
-            <BookCounselor onBack={() => setSelectedFeature('dashboard')} />
-          ) : selectedFeature === 'dashboard' ? (
-            <>
           {/* Quick Actions - refined styling */}
           <div>
             <div className="flex items-center justify-between mb-6">
@@ -199,7 +197,7 @@ const Sahay = () => {
                   <h4 className="font-bold text-[#2e2f34] text-base mb-1">{action.title}</h4>
                   <p className="text-[#767272] text-sm mb-3">{action.subtitle}</p>
                   <button 
-                    onClick={() => action.title === 'Book Session' ? setSelectedFeature('booking') : null}
+                    onClick={() => navigate(`/${action.id}`)}
                     className="w-full bg-[#f2f7eb] hover:bg-[#eaf1f5] text-[#2e2f34] font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center group-hover:bg-[#e1d1c9] group-hover:text-[#3d9098]"
                   >
                     {action.action}
@@ -275,7 +273,7 @@ const Sahay = () => {
                   <button className="text-sm px-3 py-1 rounded border" style={{borderColor:'#c8ced1', color:'#2e2f34'}}>View</button>
                 </div>
                 <button 
-                  onClick={() => setSelectedFeature('booking')}
+                  onClick={() => navigate('/booking')}
                   className="w-full bg-[#2dc8ca] text-white py-2.5 rounded-lg font-semibold hover:opacity-90"
                 >
                   Book New Session
@@ -284,30 +282,24 @@ const Sahay = () => {
             </div>
           </div>
 
-              {/* Community Highlight */}
-              <div className="bg-[#2dc8ca] rounded-xl p-8 text-white">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-2xl font-bold mb-3">Join Our Peer Support Community</h3>
-                    <p className="text-[#fbecb3] text-lg mb-6">Connect with fellow students in a safe, supportive space</p>
-                    <button className="bg-white text-[#2dc8ca] px-8 py-3 rounded-lg font-bold hover:bg-[#f2f7eb] transition-colors flex items-center">
-                      Join Community
-                      <Users className="w-5 h-5 ml-2" />
-                    </button>
-                  </div>
-                  <div className="hidden md:block">
-                    <div className="w-24 h-24 bg-[#a0b4bb] rounded-xl flex items-center justify-center">
-                      <Users className="w-12 h-12 text-white" />
-                    </div>
-                  </div>
+          {/* Community Highlight */}
+          <div className="bg-[#2dc8ca] rounded-xl p-8 text-white">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-2xl font-bold mb-3">Join Our Peer Support Community</h3>
+                <p className="text-[#fbecb3] text-lg mb-6">Connect with fellow students in a safe, supportive space</p>
+                <button className="bg-white text-[#2dc8ca] px-8 py-3 rounded-lg font-bold hover:bg-[#f2f7eb] transition-colors flex items-center">
+                  Join Community
+                  <Users className="w-5 h-5 ml-2" />
+                </button>
+              </div>
+              <div className="hidden md:block">
+                <div className="w-24 h-24 bg-[#a0b4bb] rounded-xl flex items-center justify-center">
+                  <Users className="w-12 h-12 text-white" />
                 </div>
               </div>
-            </>
-          ) : (
-            <div className="flex items-center justify-center h-64">
-              <p className="text-[#767272] text-lg">Feature coming soon...</p>
             </div>
-          )}
+          </div>
         </main>
       </div>
     </div>

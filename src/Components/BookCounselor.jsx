@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Calendar, 
   Clock, 
@@ -21,7 +22,8 @@ import {
   X
 } from 'lucide-react';
 
-const BookCounselor = ({ onBack }) => {
+const BookCounselor = () => {
+  const navigate = useNavigate();
   const [selectedCounselor, setSelectedCounselor] = useState(null);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
@@ -219,12 +221,13 @@ const BookCounselor = ({ onBack }) => {
 
   return (
     <div className="min-h-screen bg-[#eaf1f5] p-6">
+      
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
             <button
-              onClick={onBack}
+              onClick={() => navigate('/dashboard')}
               className="p-2 rounded-lg hover:bg-white transition-colors"
               style={{background:'#c8ced1'}}
             >
