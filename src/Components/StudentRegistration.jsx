@@ -3,6 +3,7 @@ import {
   GraduationCap, User, Lock, Upload, CheckCircle, 
   Mail, Building, Loader2, AlertCircle, UserPlus
 } from 'lucide-react';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 // Mock function to simulate fetching verified colleges
 const fetchVerifiedColleges = async (query) => {
@@ -147,6 +148,7 @@ export default function StudentRegistrationSinglePage() {
       </div>
     );
   }
+  const navigate= useNavigate();
 
   return (
     <div className="min-h-screen bg-[#eaf1f5] font-sans p-4 sm:p-8">
@@ -331,7 +333,7 @@ export default function StudentRegistrationSinglePage() {
               <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-green-600 text-white px-6 py-4 rounded-lg font-semibold text-lg hover:bg-green-700 disabled:opacity-70 disabled:cursor-wait transition-all duration-300 flex items-center justify-center space-x-3"
+                  className="w-full bg-green-600 text-white px-6 py-4 rounded-lg font-semibold text-lg hover:bg-green-700 disabled:opacity-70 disabled:cursor-wait transition-all duration-300 flex items-center justify-center space-x-3" onClick={()=>navigate('/dashboard')}
               >
                   {isSubmitting ? (
                       <>

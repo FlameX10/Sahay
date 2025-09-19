@@ -18,8 +18,8 @@ export default function InstitutionRegistration() {
     nodalOfficerDesignation: '',
     nodalOfficerPhone: '',
     officialEmail: '',
-    password: '',         // ADDED: Password state
-    confirmPassword: '',  // ADDED: Confirm Password state
+    password: '',
+    confirmPassword: '',
     
     // Document uploads
     documents: {
@@ -43,7 +43,7 @@ export default function InstitutionRegistration() {
 
   const steps = [
     { number: 1, title: 'Institution Details', description: 'Basic information' },
-    { number: 2, title: 'Nodal Officer', description: 'Contact & Credentials' }, // CHANGED description
+    { number: 2, title: 'Nodal Officer', description: 'Contact & Credentials' },
     { number: 3, title: 'Document Upload', description: 'Verification files' },
     { number: 4, title: 'Review & Submit', description: 'Final confirmation' }
   ];
@@ -107,7 +107,6 @@ export default function InstitutionRegistration() {
       else if (!/^[1-9][0-9]{5}$/.test(formData.pincode)) newErrors.pincode = 'Enter a valid 6-digit pincode';
     }
     
-    // --- CHANGED: Added password validation ---
     if (step === 2) {
       if (!formData.nodalOfficerName.trim()) newErrors.nodalOfficerName = 'Nodal officer name is required';
       if (!formData.nodalOfficerDesignation.trim()) newErrors.nodalOfficerDesignation = 'Designation is required';
@@ -172,12 +171,11 @@ export default function InstitutionRegistration() {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
       setIsSubmitting(false);
-      setCurrentStep(5);
+      
+      // You can add your custom logic here after form submission
+      // For example: redirect, show custom success message, etc.
     }
   };
-
-  // --- Step Indicator, Step 1, Step 3, Step 4, and Success renderers remain the same ---
-  // (Code for those functions is omitted for brevity but should be kept from the previous version)
 
   const renderStepIndicator = () => (
     <div className="flex items-center justify-center mb-12">
@@ -281,7 +279,6 @@ export default function InstitutionRegistration() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-            {/* --- Existing Nodal Officer Fields --- */}
             <div>
             <label className="block text-sm font-medium text-[#2e2f34] mb-2">Full Name *</label>
             <input
@@ -319,7 +316,6 @@ export default function InstitutionRegistration() {
             {errors.officialEmail && <p className="text-red-500 text-sm mt-1">{errors.officialEmail}</p>}
             </div>
             
-            {/* --- ADDED: Password Fields --- */}
             <div className="md:col-span-2 border-t pt-6 mt-2">
                 <div className="grid md:grid-cols-2 gap-6">
                     <div>
@@ -439,19 +435,6 @@ export default function InstitutionRegistration() {
         </div>
     </div>
   );
-  
-  const renderSuccess = () => (
-    <div className="text-center p-10 animate-fade-in">
-        <CheckCircle className="w-24 h-24 text-green-500 mx-auto mb-6" />
-        <h2 className="text-3xl font-bold text-[#2e2f34] mb-4">Registration Submitted!</h2>
-        <p className="text-[#767272] mb-8">Our team will review your application. Upon approval, login credentials for <strong className="text-[#2dc8ca]">{formData.officialEmail}</strong> will be activated. You will be notified within 3-5 business days.</p>
-        <button
-            onClick={() => { setCurrentStep(1); /* Reset form logic */ }}
-            className="bg-[#2dc8ca] text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-all duration-300">
-            Register Another Institution
-        </button>
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-[#eaf1f5] font-sans p-4 sm:p-8">
@@ -473,7 +456,6 @@ export default function InstitutionRegistration() {
                     {currentStep === 2 && renderStep2()}
                     {currentStep === 3 && renderStep3()}
                     {currentStep === 4 && renderStep4()}
-                    {currentStep === 5 && renderSuccess()}
                 </div>
                 {currentStep <= 4 && (
                     <div className="mt-12 pt-6 border-t flex justify-between items-center">
