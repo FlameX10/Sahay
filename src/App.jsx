@@ -28,7 +28,7 @@ function App() {
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/counselors" element={<ManageCounselors />} />
         <Route path="/admin/peer-support" element={<PeerSupportManagement />} />
-        <Route path="/cousellor" element={<CounselorDashboard />} />
+        <Route path="/counsellor" element={<CounselorDashboard />} />
       </Routes>
     </Router>
     

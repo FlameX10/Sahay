@@ -1,38 +1,30 @@
-import React, { useState } from 'react'; // <-- CORRECTED LINE
-import { LogIn, User, Building, Mail, Lock, Heart, ArrowRight, Loader2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // 1. Import useNavigate
+import { LogIn, User, Building, Mail, Lock, Heart, ArrowRight } from 'lucide-react';
 
 export default function UnifiedLoginPage() {
   const [userType, setUserType] = useState('student'); // 'student' or 'institution'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate(); // 2. Initialize the hook
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
     setError('');
 
+    // Basic validation
     if (!email || !password) {
       setError('Both email and password are required.');
       return;
     }
 
-    setIsSubmitting(true);
-    console.log(`Attempting login for ${userType} with email: ${email}`);
-
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    // Mock API response logic
-    if (password === 'password123') {
-      // On success, you would typically redirect the user
-      alert(`Successfully logged in as ${userType}!`);
-      // Example: window.location.href = `/${userType}/dashboard`;
-    } else {
-      setError('Invalid credentials. Please try again.');
+    // 3. Use navigate() for client-side routing
+    if (userType === 'student') {
+      navigate('/dashboard');
+    } else { // userType is 'institution'
+      navigate('/counsellor');
     }
-
-    setIsSubmitting(false);
   };
 
   const UserTypeToggle = () => (
@@ -140,20 +132,10 @@ export default function UnifiedLoginPage() {
             <div>
               <button
                 type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-[#2dc8ca] text-white py-3 px-4 rounded-lg font-semibold text-lg hover:opacity-90 disabled:opacity-70 disabled:cursor-wait transition-all duration-300 flex items-center justify-center space-x-2"
+                className="w-full bg-[#2dc8ca] text-white py-3 px-4 rounded-lg font-semibold text-lg hover:opacity-90 transition-all duration-300 flex items-center justify-center space-x-2"
               >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-6 h-6 animate-spin" />
-                    <span>Signing In...</span>
-                  </>
-                ) : (
-                  <>
-                    <LogIn className="w-6 h-6" />
-                    <span>Sign In</span>
-                  </>
-                )}
+                <LogIn className="w-6 h-6" />
+                <span>Sign In</span>
               </button>
             </div>
           </form>

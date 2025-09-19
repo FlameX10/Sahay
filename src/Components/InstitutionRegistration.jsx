@@ -4,8 +4,10 @@ import {
   AlertCircle, ArrowRight, ArrowLeft, Building, Mail, Phone, 
   User, GraduationCap, Award, CreditCard, FileCheck, MessageCircle, Loader2, Lock
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function InstitutionRegistration() {
+  const navigate= useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     // Part A: Basic Information
@@ -472,7 +474,7 @@ export default function InstitutionRegistration() {
                             </button>
                         ) : (
                             <button
-                                onClick={handleSubmit} disabled={isSubmitting}
+                                onClick={()=>navigate('/admin/dashboard')}
                                 className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 disabled:opacity-70 disabled:cursor-wait transition-all duration-300 flex items-center space-x-2">
                                 {isSubmitting ? (<><Loader2 className="w-5 h-5 animate-spin" /><span>Submitting...</span></>) : (<><CheckCircle className="w-5 h-5" /><span>Submit Application</span></>)}
                             </button>
