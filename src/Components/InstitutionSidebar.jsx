@@ -117,7 +117,7 @@ const InstitutionSidebar = ({ sidebarOpen, setSidebarOpen }) => {
               </li>
               <li>
                  <button
-                    onClick={() => handleNavigate('/login')} // Logs out and goes to login page
+                    onClick={() => handleNavigate('/')} // Logs out and goes to login page
                     className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-[#ab5275] hover:bg-[#cdbdd4]"
                   >
                     <LogOut className="w-5 h-5" />

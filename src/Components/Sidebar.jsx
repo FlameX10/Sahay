@@ -94,7 +94,7 @@ const Sidebar = ({
             </div>
             <span className="font-medium">Settings</span>
           </button>
-          <button className="w-full flex items-center space-x-3 px-4 py-3 text-[#ab5275] hover:bg-[#cdbdd4] rounded-xl transition-colors">
+          <button className="w-full flex items-center space-x-3 px-4 py-3 text-[#ab5275] hover:bg-[#cdbdd4] rounded-xl transition-colors" onClick={()=>navigate('/')}>
             <div className="w-8 h-8 bg-[#f38788] rounded-lg flex items-center justify-center">
               <LogOut className="w-4 h-4 text-white" />
             </div>
