@@ -1,11 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { Heart, Shield, Users, Brain, CheckCircle, Star, ArrowRight, Menu, X, MessageCircle, Calendar, BookOpen, BarChart3, Sparkles } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Homepage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
-
+  const navigate = useNavigate();
   const testimonials = [
     { text: "Finally, a platform where I can seek help without anyone knowing who I am.", author: "Anonymous Student, IIT Delhi", rating: 5 },
     { text: "The AI chatbot helped me through my exam anxiety at 2 AM when no one else was available.", author: "Anonymous Student, NIT Trichy", rating: 5 },
@@ -70,7 +71,7 @@ export default function Homepage() {
               <a href="#how-it-works" className="transition-colors" style={{color:'#767272'}}>How It Works</a>
               <a href="#who-we-help" className="transition-colors" style={{color:'#767272'}}>Who We Help</a>
               <a href="#testimonials" className="transition-colors" style={{color:'#767272'}}>Reviews</a>
-              <button className="text-white px-6 py-2 rounded-full transition-all duration-300 transform hover:scale-105" style={{background:'#2dc8ca'}}>
+              <button className="text-white px-6 py-2 rounded-full transition-all duration-300 transform hover:scale-105" style={{background:'#2dc8ca'}} onClick={()=>navigate('/login')}>
                 Get Started
               </button>
             </div>
@@ -93,7 +94,9 @@ export default function Homepage() {
                 <a href="#how-it-works" className="px-4" style={{color:'#767272'}}>How It Works</a>
                 <a href="#who-we-help" className="px-4" style={{color:'#767272'}}>Who We Help</a>
                 <a href="#testimonials" className="px-4" style={{color:'#767272'}}>Reviews</a>
-                <button className="text-white px-6 py-2 rounded-full mx-4" style={{background:'#2dc8ca'}}>
+                <button className="text-white px-6 py-2 rounded-full mx-4" style={{background:'#2dc8ca'}} onClick={()=>navigate('/login')
+                  
+                }>
                   Get Started
                 </button>
               </div>
@@ -123,7 +126,7 @@ export default function Homepage() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                <button className="w-full sm:w-auto text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2" style={{background:'#2dc8ca'}}>
+                <button className="w-full sm:w-auto text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2" style={{background:'#2dc8ca'}} onClick={()=>navigate('/student-registration')}>
                   <span>Start Your Wellness Journey</span>
                   <ArrowRight className="w-5 h-5" />
                 </button>
@@ -453,6 +456,17 @@ export default function Homepage() {
                     <h4 className="font-semibold mb-2" style={{color:'#2e2f34'}}>Institutional Integration</h4>
                     <p style={{color:'#767272'}}>Deep integration with college systems while maintaining student privacy</p>
                   </div>
+                  
+                </div>
+                <div className="flex items-start space-x-4">
+                  <div className="p-2 rounded-full mt-1" style={{background:'#f2f7eb'}}>
+                    <CheckCircle className="w-5 h-5" style={{color:'#889260'}} />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-2" style={{color:'#2e2f34'}}>Institutional Integration</h4>
+                    <p style={{color:'#767272'}}>Deep integration with college systems while maintaining student privacy</p>
+                  </div>
+                  
                 </div>
               </div>
             </div>
@@ -582,11 +596,11 @@ export default function Homepage() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2" style={{color:'#3d9098'}}>
+            <button className="bg-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2" style={{color:'#3d9098'}} onClick={()=>navigate('/student-registration')}>
               <span>Get Started Now</span>
               <ArrowRight className="w-5 h-5" />
             </button>
-            <button className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white transition-all duration-300 flex items-center justify-center space-x-2" style={{hoverColor:'#3d9098'}}>
+            <button className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white transition-all duration-300 flex items-center justify-center space-x-2" style={{hoverColor:'#3d9098'}} onClick={()=>navigate('/institution-registration')}>
               <Users className="w-5 h-5" />
               <span>For Institutions</span>
             </button>
@@ -631,7 +645,7 @@ export default function Homepage() {
             <div>
               <h4 className="text-lg font-semibold mb-4">For Institutions</h4>
               <ul className="space-y-3" style={{color:'#c8ced1'}}>
-                <li><a href="#" className="hover:text-white transition-colors">Get Started</a></li>
+                <li><a href="/institution-registration" className="hover:text-white transition-colors">Get Started</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Integration Guide</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Admin Dashboard</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Contact Sales</a></li>
