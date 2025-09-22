@@ -463,8 +463,26 @@ export default function Homepage() {
                     <CheckCircle className="w-5 h-5" style={{color:'#889260'}} />
                   </div>
                   <div>
-                    <h4 className="font-semibold mb-2" style={{color:'#2e2f34'}}>  </h4>
-                    <p style={{color:'#767272'}}>Deep integration with college systems while maintaining student privacy</p>
+                    <h4 className="font-semibold mb-2" style={{color:'#2e2f34'}}> Pervasive Social Stigma</h4>
+                    <p style={{color:'#767272'}}>The deep-rooted fear of judgment prevents students from seeking help, requiring a truly anonymous and non-judgmental platform.</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <div className="p-2 rounded-full mt-1" style={{background:'#f2f7eb'}}>
+                    <CheckCircle className="w-5 h-5" style={{color:'#889260'}} />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-2" style={{color:'#2e2f34'}}>Cultural & Linguistic Gap  </h4>
+                    <p style={{color:'#767272'}}>Most solutions are Western-oriented and lack resources in regional Indian languages, making them unrelatable and ineffective for a diverse student body.</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <div className="p-2 rounded-full mt-1" style={{background:'#f2f7eb'}}>
+                    <CheckCircle className="w-5 h-5" style={{color:'#889260'}} />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-2" style={{color:'#2e2f34'}}>Scalability & Accessibility Issues  </h4>
+                    <p style={{color:'#767272'}}>A critical shortage of counselors and the high cost of private therapy leave a majority of students, especially in remote areas, with no accessible support system.</p>
                   </div>
                 </div>
               </div>
