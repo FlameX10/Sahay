@@ -12,6 +12,7 @@ import AdminDashboard from './Components/AdminDashboard'
 import ManageCounselors from './Components/ManageCounselors'
 import PeerSupportManagement from './Components/PeerSupportManagement'
 import CounselorDashboard from './Components/CounsellorDashboard'
+import Institution from './Components/Institution'
 function App() {
   return (
     <Router>
@@ -29,6 +30,7 @@ function App() {
         <Route path="/admin/counselors" element={<ManageCounselors />} />
         <Route path="/admin/peer-support" element={<PeerSupportManagement />} />
         <Route path="/counsellor" element={<CounselorDashboard />} />
+        <Route path="/institution" element={<Institution/>} />
       </Routes>
     </Router>
     
