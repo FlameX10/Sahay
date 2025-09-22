@@ -27,6 +27,8 @@ import {
   Shield
 } from 'lucide-react';
 
+const API_KEY = 'AIzaSyByjtUySKpjRTPuyoHjt0OQNYz4xgGgTvY';
+
 // Sidebar Component
 
 const DailyCheckIn = () => {
@@ -43,11 +45,18 @@ const DailyCheckIn = () => {
     hunger: null,
     anxiety: null,
     workMood: null,
+    energy: null,
+    social: null,
+    focus: null,
+    freeText: '',
     notes: '',
     tags: []
   });
   const [history, setHistory] = useState([]);
   const [showScore, setShowScore] = useState(false);
+  const [analysisLoading, setAnalysisLoading] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState('');
+  const [analysisError, setAnalysisError] = useState('');
 
   const availableTags = useMemo(() => [
     'study', 'friends', 'sleep', 'exercise', 'family', 'anxiety', 'focus', 'gratitude', 'work', 'health'
@@ -121,6 +130,49 @@ const DailyCheckIn = () => {
         { id: 2, label: 'Unmotivated', color: '#f99c5b', description: 'Struggling to focus' },
         { id: 1, label: 'Very Unmotivated', color: '#f38788', description: 'Hard to get anything done' },
       ]
+    },
+    {
+      id: 'energy',
+      title: 'How is your energy level today?',
+      icon: TrendingUp,
+      options: [
+        { id: 5, label: 'Very High', color: '#2dc8ca', description: 'Energetic and lively' },
+        { id: 4, label: 'High', color: '#52c97a', description: 'Feeling upbeat' },
+        { id: 3, label: 'Average', color: '#eac163', description: 'Moderate energy' },
+        { id: 2, label: 'Low', color: '#f99c5b', description: 'A bit drained' },
+        { id: 1, label: 'Very Low', color: '#f38788', description: 'Exhausted' },
+      ]
+    },
+    {
+      id: 'social',
+      title: 'How connected do you feel to others today?',
+      icon: Users,
+      options: [
+        { id: 5, label: 'Very Connected', color: '#2dc8ca', description: 'Strong social support' },
+        { id: 4, label: 'Connected', color: '#52c97a', description: 'Generally connected' },
+        { id: 3, label: 'Neutral', color: '#eac163', description: 'Neither connected nor isolated' },
+        { id: 2, label: 'Isolated', color: '#f99c5b', description: 'Limited interactions' },
+        { id: 1, label: 'Very Isolated', color: '#f38788', description: 'Feeling alone' },
+      ]
+    },
+    {
+      id: 'focus',
+      title: 'How is your focus and concentration?',
+      icon: BarChart3,
+      options: [
+        { id: 5, label: 'Excellent', color: '#2dc8ca', description: 'Laser focused' },
+        { id: 4, label: 'Good', color: '#52c97a', description: 'Mostly focused' },
+        { id: 3, label: 'Average', color: '#eac163', description: 'On and off' },
+        { id: 2, label: 'Poor', color: '#f99c5b', description: 'Hard to concentrate' },
+        { id: 1, label: 'Very Poor', color: '#f38788', description: 'Cannot focus at all' },
+      ]
+    },
+    {
+      id: 'freeText',
+      title: "Anything you'd like to share today?",
+      icon: MessageCircle,
+      type: 'text',
+      placeholder: "Write a few sentences about your day, feelings, or concerns..."
     }
   ];
 
@@ -130,11 +182,15 @@ const DailyCheckIn = () => {
       responses.sleep?.id || 0,
       responses.hunger?.id || 0,
       responses.anxiety?.id || 0,
-      responses.workMood?.id || 0
+      responses.workMood?.id || 0,
+      responses.energy?.id || 0,
+      responses.social?.id || 0,
+      responses.focus?.id || 0
     ];
     
     const total = scores.reduce((sum, score) => sum + score, 0);
-    const percentage = Math.round((total / 25) * 100);
+    const maxTotal = 5 * scores.length;
+    const percentage = Math.round((total / maxTotal) * 100);
     
     return {
       total,
@@ -162,6 +218,79 @@ const DailyCheckIn = () => {
       setCurrentStep(prev => prev + 1);
     } else {
       setShowScore(true);
+    }
+  };
+
+  const handleTextNext = () => {
+    if (currentStep < assessmentSteps.length - 1) {
+      setCurrentStep(prev => prev + 1);
+    } else {
+      setShowScore(true);
+    }
+  };
+
+  const buildAnalysisPrompt = () => {
+    const chosen = [
+      { key: 'mood', label: 'Mood' },
+      { key: 'sleep', label: 'Sleep' },
+      { key: 'hunger', label: 'Eating' },
+      { key: 'anxiety', label: 'Anxiety/Stress' },
+      { key: 'workMood', label: 'Work/Studies' },
+      { key: 'energy', label: 'Energy' },
+      { key: 'social', label: 'Social Connectedness' },
+      { key: 'focus', label: 'Focus' },
+    ].map(({ key, label }) => `${label}: ${responses[key]?.label || 'N/A'}`).join('\n');
+
+    const notes = responses.notes?.trim() ? `Notes: ${responses.notes.trim()}` : '';
+    const freeText = responses.freeText?.trim() ? `User Share: ${responses.freeText.trim()}` : '';
+    const tags = responses.tags?.length ? `Tags: ${responses.tags.join(', ')}` : '';
+    const score = calculateWellnessScore();
+
+    return `You are a supportive mental health assistant. Analyze the user's daily check-in and provide:
+1) Overall sentiment (very positive/positive/neutral/negative/very negative)
+2) Key themes observed
+3) Areas of concern (if any) and severity
+4) Strengths to reinforce
+5) 3 personalized, practical suggestions for today (short, actionable)
+6) When to seek professional help (one line if applicable)
+
+Wellness Score: ${score.percentage}% (${score.level})
+${chosen}
+${notes}
+${freeText}
+${tags}
+
+Keep tone empathetic, concise, and non-judgmental. Use bullet points.`;
+  };
+
+  const analyzeWithAI = async () => {
+    setAnalysisError('');
+    setAnalysisResult('');
+    setAnalysisLoading(true);
+    try {
+      const apiKey = API_KEY;
+      const prompt = buildAnalysisPrompt();
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [
+            { role: 'user', parts: [{ text: prompt }] }
+          ]
+        })
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        const msg = text || `Request failed (${res.status} ${res.statusText})`;
+        throw new Error(msg);
+      }
+      const data = await res.json();
+      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      setAnalysisResult(text || 'No analysis returned.');
+    } catch (e) {
+      setAnalysisError(e?.message || 'Something went wrong.');
+    } finally {
+      setAnalysisLoading(false);
     }
   };
 
@@ -196,6 +325,10 @@ const DailyCheckIn = () => {
       hunger: null,
       anxiety: null,
       workMood: null,
+      energy: null,
+      social: null,
+      focus: null,
+      freeText: '',
       notes: '',
       tags: []
     });
@@ -212,6 +345,10 @@ const DailyCheckIn = () => {
       hunger: null,
       anxiety: null,
       workMood: null,
+      energy: null,
+      social: null,
+      focus: null,
+      freeText: '',
       notes: '',
       tags: []
     });
@@ -276,25 +413,46 @@ const DailyCheckIn = () => {
                 <h2 className="text-xl font-semibold text-[#2e2f34]">{currentStepData.title}</h2>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {currentStepData.options.map(option => (
-                  <button
-                    key={option.id}
-                    onClick={() => handleResponse(currentStepData.id, option)}
-                    className="p-4 border rounded-xl text-left hover:shadow-sm transition-all duration-200 hover:scale-102"
+              {currentStepData.type === 'text' ? (
+                <div>
+                  <textarea
+                    value={responses.freeText}
+                    onChange={(e) => setResponses(prev => ({...prev, freeText: e.target.value}))}
+                    rows={4}
+                    className="w-full p-3 border rounded-lg focus:outline-none focus:border-[#3d9098]"
                     style={{borderColor:'#c8ced1'}}
-                  >
-                    <div className="flex items-center space-x-3 mb-2">
-                      <div 
-                        className="w-4 h-4 rounded-full"
-                        style={{backgroundColor: option.color}}
-                      />
-                      <span className="font-semibold text-[#2e2f34]">{option.label}</span>
-                    </div>
-                    <p className="text-sm text-[#767272]">{option.description}</p>
-                  </button>
-                ))}
-              </div>
+                    placeholder={currentStepData.placeholder}
+                  />
+                  <div className="flex justify-end mt-4">
+                    <button
+                      onClick={handleTextNext}
+                      className="px-5 py-2 bg-[#3d9098] text-white rounded-lg font-semibold hover:opacity-90"
+                    >
+                      Continue →
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {currentStepData.options.map(option => (
+                    <button
+                      key={option.id}
+                      onClick={() => handleResponse(currentStepData.id, option)}
+                      className="p-4 border rounded-xl text-left hover:shadow-sm transition-all duration-200 hover:scale-102"
+                      style={{borderColor:'#c8ced1'}}
+                    >
+                      <div className="flex items-center space-x-3 mb-2">
+                        <div 
+                          className="w-4 h-4 rounded-full"
+                          style={{backgroundColor: option.color}}
+                        />
+                        <span className="font-semibold text-[#2e2f34]">{option.label}</span>
+                      </div>
+                      <p className="text-sm text-[#767272]">{option.description}</p>
+                    </button>
+                  ))}
+                </div>
+              )}
 
               {/* Navigation */}
               <div className="flex justify-between mt-6">
@@ -352,7 +510,7 @@ const DailyCheckIn = () => {
 
                 {/* Score Breakdown */}
                 <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-                  {assessmentSteps.map(step => {
+                  {assessmentSteps.filter(step => step.options).map(step => {
                     const response = responses[step.id];
                     return (
                       <div key={step.id} className="text-center p-3 rounded-lg" style={{backgroundColor: '#f8f9fa'}}>
@@ -406,6 +564,34 @@ const DailyCheckIn = () => {
                       ))}
                     </div>
                   </div>
+                </div>
+
+                {/* AI Analysis */}
+                <div className="mt-8 p-4 border rounded-xl" style={{borderColor:'#c8ced1'}}>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center space-x-2">
+                      <Brain className="w-5 h-5 text-[#3d9098]" />
+                      <span className="font-semibold text-[#2e2f34]">AI Sentiment & Guidance</span>
+                    </div>
+                    <button
+                      onClick={analyzeWithAI}
+                      disabled={analysisLoading}
+                      className="px-4 py-2 bg-[#3d9098] text-white rounded-lg font-semibold hover:opacity-90 disabled:opacity-60"
+                    >
+                      {analysisLoading ? 'Analyzing…' : 'Analyze with AI'}
+                    </button>
+                  </div>
+                  {analysisError && (
+                    <div className="text-sm text-red-600 mb-2">{analysisError}</div>
+                  )}
+                  {analysisResult && (
+                    <div className="prose max-w-none text-sm whitespace-pre-wrap text-[#2e2f34]">
+                      {analysisResult}
+                    </div>
+                  )}
+                  {!analysisResult && !analysisError && !analysisLoading && (
+                    <div className="text-sm text-[#767272]">Click "Analyze with AI" to see a brief sentiment summary and suggestions.</div>
+                  )}
                 </div>
 
                 {/* Action Buttons */}
