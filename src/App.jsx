@@ -17,6 +17,8 @@ import Meditation from './Components/Meditation'
 import Exercise from './Components/Exercise'
 import AdminAnalyticsDashboard from './Components/AdminAnalyticsDashboard'  
 import MainAdmin from './Components/MainAdmin'
+import AssessmentFlow from './Components/AssessmentFlow';
+import Chatbot from './Components/Chatbot';
 function App() {
   return (
     <Router>
@@ -27,8 +29,10 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/dashboard" element={<Sahay />} />
         <Route path="/booking" element={<BookCounselor />} />
-        <Route path="/checkin" element={<DailyCheckIn />} />
+        <Route path="/assessmentFlow" element={<AssessmentFlow />} />
+        <Route path="/chatbot" element={<Chatbot />} />
         <Route path="/resources" element={<PsychoeducationalResourceHub />} />
+        <Route path="/checkin" element={<DailyCheckIn />} />
         <Route path="/community" element={<PeerSupport />} />
         <Route path="/meditation" element={<Meditation />} />
         <Route path="/exercise" element={<Exercise />} />
