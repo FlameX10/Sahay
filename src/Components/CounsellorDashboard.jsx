@@ -21,6 +21,7 @@ import {
   Trash2,
   MessageSquare
 } from 'lucide-react';
+import AnalyticsDashboard from './AnalyticsDashboard';
 
 const CounselorDashboard = () => {
   const [activeTab, setActiveTab] = useState('appointments');
@@ -672,13 +673,9 @@ const CounselorDashboard = () => {
 
           {/* Analytics Tab */}
           {activeTab === 'analytics' && (
-             <div className="bg-white rounded-xl p-12 shadow-sm border flex flex-col items-center justify-center text-center" style={{borderColor:'#c8ced1'}}>
-                <Award className="w-16 h-16 text-[#cdbdd4] mb-4"/>
-                <h3 className="text-2xl font-bold text-[#2e2f34] mb-2">Analytics Dashboard</h3>
-                <p className="text-[#767272] max-w-md">
-                    This feature is coming soon! You'll be able to see detailed insights into your sessions, student feedback, and performance metrics right here.
-                </p>
-            </div>
+
+            <AnalyticsDashboard />
+
           )}
 
         </div>

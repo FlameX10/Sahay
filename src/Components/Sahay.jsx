@@ -282,13 +282,13 @@ const Sahay = () => {
             </div>
           </div>
 
-          {/* Community Highlight */}
+          {/* Community Highlight + Wellness */}
           <div className="bg-[#2dc8ca] rounded-xl p-8 text-white">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-2xl font-bold mb-3">Join Our Peer Support Community</h3>
                 <p className="text-[#fbecb3] text-lg mb-6">Connect with fellow students in a safe, supportive space</p>
-                <button className="bg-white text-[#2dc8ca] px-8 py-3 rounded-lg font-bold hover:bg-[#f2f7eb] transition-colors flex items-center">
+                <button onClick={()=>navigate('/community')} className="bg-white text-[#2dc8ca] px-8 py-3 rounded-lg font-bold hover:bg-[#f2f7eb] transition-colors flex items-center">
                   Join Community
                   <Users className="w-5 h-5 ml-2" />
                 </button>
@@ -298,6 +298,26 @@ const Sahay = () => {
                   <Users className="w-12 h-12 text-white" />
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Meditation & Exercise shortcuts */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white rounded-xl p-6 border" style={{borderColor:'#c8ced1'}}>
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-xl font-bold text-[#2e2f34]">Meditation</h4>
+                <span className="text-xs px-2 py-1 rounded bg-[#eaf1f5] text-[#3d9098]">Relax</span>
+              </div>
+              <p className="text-[#767272] mb-4">Play soothing ambient sounds for focus and calm.</p>
+              <button onClick={()=>navigate('/meditation')} className="w-full bg-[#2dc8ca] text-white py-2.5 rounded-lg font-semibold hover:opacity-90">Open Meditation</button>
+            </div>
+            <div className="bg-white rounded-xl p-6 border" style={{borderColor:'#c8ced1'}}>
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-xl font-bold text-[#2e2f34]">Exercise</h4>
+                <span className="text-xs px-2 py-1 rounded bg-[#fbecb3] text-[#7d7074]">Refresh</span>
+              </div>
+              <p className="text-[#767272] mb-4">Quick routines to energize body and reduce stress.</p>
+              <button onClick={()=>navigate('/exercise')} className="w-full bg-[#889260] text-white py-2.5 rounded-lg font-semibold hover:opacity-90">Open Exercise</button>
             </div>
           </div>
         </main>

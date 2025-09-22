@@ -442,12 +442,17 @@ const PsychoeducationalResourceHub = () => {
 
                       {/* Action Buttons */}
                       <div className="flex items-center justify-between pt-3 border-t" style={{borderColor:'#c8ced1'}}>
-                        <button className="flex items-center space-x-2 text-[#2dc8ca] hover:text-[#3d9098] transition-colors">
+                        <a
+                          href={resource.category === 'videos' ? 'https://youtu.be/dQw4w9WgXcQ' : resource.category === 'audio' ? 'https://soundcloud.com' : 'https://example.com/guide.pdf'}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center space-x-2 text-[#2dc8ca] hover:text-[#3d9098] transition-colors"
+                        >
                           <Play className="w-4 h-4" />
                           <span className="text-sm font-medium">
                             {resource.category === 'guides' ? 'Read Guide' : 'Play'}
                           </span>
-                        </button>
+                        </a>
                         <div className="flex items-center space-x-2">
                           <button className="p-2 hover:bg-[#eaf1f5] rounded-lg transition-colors">
                             <Download className="w-4 h-4 text-[#767272]" />

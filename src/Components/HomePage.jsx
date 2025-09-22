@@ -297,10 +297,10 @@ export default function Homepage() {
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="text-center group">
               <div className="bg-white p-6 rounded-2xl shadow-lg mb-6 transform group-hover:scale-105 transition-transform duration-300">
-                <div className="text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4" style={{background:'#3d9098'}}>
+                <div className="text-white w-8 h-8 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4" style={{background:'#3d9098'}}>
                   1
                 </div>
-                <Shield className="w-16 h-16 mx-auto" style={{color:'#3d9098'}} />
+                <Shield className="w-8 h-8 mx-auto" style={{color:'#3d9098'}} />
               </div>
               <h3 className="text-xl font-bold mb-4" style={{color:'#2e2f34'}}>
                 Verify & Register
@@ -312,10 +312,10 @@ export default function Homepage() {
 
             <div className="text-center group">
               <div className="bg-white p-6 rounded-2xl shadow-lg mb-6 transform group-hover:scale-105 transition-transform duration-300">
-                <div className="text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4" style={{background:'#2dc8ca'}}>
+                <div className="text-white w-8 h-8 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4" style={{background:'#2dc8ca'}}>
                   2
                 </div>
-                <MessageCircle className="w-16 h-16 mx-auto" style={{color:'#2dc8ca'}} />
+                <MessageCircle className="w-8 h-8 mx-auto" style={{color:'#2dc8ca'}} />
               </div>
               <h3 className="text-xl font-bold mb-4" style={{color:'#2e2f34'}}>Access Support</h3>
               <p style={{color:'#767272'}}>
@@ -325,10 +325,10 @@ export default function Homepage() {
 
             <div className="text-center group">
               <div className="bg-white p-6 rounded-2xl shadow-lg mb-6 transform group-hover:scale-105 transition-transform duration-300">
-                <div className="text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4" style={{background:'#f99c5b'}}>
+                <div className="text-white w-8 h-8 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4" style={{background:'#f99c5b'}}>
                   3
                 </div>
-                <Heart className="w-16 h-16 mx-auto" style={{color:'#f99c5b'}} />
+                <Heart className="w-8 h-8 mx-auto" style={{color:'#f99c5b'}} />
               </div>
               <h3 className="text-xl font-bold mb-4" style={{color:'#2e2f34'}}>Track Progress</h3>
               <p style={{color:'#767272'}}>

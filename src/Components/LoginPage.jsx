@@ -142,7 +142,7 @@ export default function UnifiedLoginPage() {
 
           <p className="mt-8 text-center text-sm text-[#767272]">
             {userType === 'student' ? "Don't have an account?" : "Haven't registered your institution?"}{' '}
-            <a href={userType === 'student' ? '/register-student' : '/register-institution'} className="font-medium text-[#2dc8ca] hover:underline">
+            <a href={userType === 'student' ? '/student-registration' : '/institution-registration'} className="font-medium text-[#2dc8ca] hover:underline">
               Register here
               <ArrowRight className="inline ml-1 w-4 h-4"/>
             </a>

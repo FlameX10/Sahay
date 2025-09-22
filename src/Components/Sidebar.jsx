@@ -11,7 +11,8 @@ import {
   X, 
   Settings,
   LogOut,
-  Shield
+  Shield,
+  Brain
 } from 'lucide-react';
 
 const Sidebar = ({ 
@@ -27,6 +28,8 @@ const Sidebar = ({
     { id: 'chatbot', icon: MessageCircle, label: 'AI Support', color: 'bg-[#9ea9a9]', path: '/chatbot' },
     { id: 'booking', icon: Calendar, label: 'Book Counselor', color: 'bg-[#d8c1ad]', path: '/booking' },
     { id: 'community', icon: Users, label: 'Peer Support', color: 'bg-[#7d7074]', path: '/community' },
+    { id: 'meditation', icon: Brain, label: 'Meditation', color: 'bg-[#a0b4bb]', path: '/meditation' },
+    { id: 'exercise', icon: Calendar, label: 'Exercise', color: 'bg-[#fbecb3]', path: '/exercise' },
   ];
 
   return (

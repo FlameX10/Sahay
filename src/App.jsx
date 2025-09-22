@@ -12,7 +12,9 @@ import AdminDashboard from './Components/AdminDashboard'
 import ManageCounselors from './Components/ManageCounselors'
 import PeerSupportManagement from './Components/PeerSupportManagement'
 import CounselorDashboard from './Components/CounsellorDashboard'
-import Institution from './Components/Institution'
+import PeerSupport from './Components/PeerSupport'
+import Meditation from './Components/Meditation'
+import Exercise from './Components/Exercise'
 function App() {
   return (
     <Router>
@@ -25,12 +27,14 @@ function App() {
         <Route path="/booking" element={<BookCounselor />} />
         <Route path="/checkin" element={<DailyCheckIn />} />
         <Route path="/resources" element={<PsychoeducationalResourceHub />} />
+        <Route path="/community" element={<PeerSupport />} />
+        <Route path="/meditation" element={<Meditation />} />
+        <Route path="/exercise" element={<Exercise />} />
         {/* Admin Side */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/counselors" element={<ManageCounselors />} />
         <Route path="/admin/peer-support" element={<PeerSupportManagement />} />
         <Route path="/counsellor" element={<CounselorDashboard />} />
-        <Route path="/institution" element={<Institution/>} />
       </Routes>
     </Router>
     
