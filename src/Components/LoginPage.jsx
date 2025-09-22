@@ -1,31 +1,68 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // 1. Import useNavigate
-import { LogIn, User, Building, Mail, Lock, Heart, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { LogIn, User, Building, Mail, Lock, Heart, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
+import { loginUser, clearError } from '../store/slices/authSlice';
 
 export default function UnifiedLoginPage() {
   const [userType, setUserType] = useState('student'); // 'student' | 'institution' | 'counsellor'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const navigate = useNavigate(); // 2. Initialize the hook
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  
+  const { loading, error, isAuthenticated, user } = useSelector(state => ({
+    loading: state.auth.loading,
+    error: state.auth.error,
+    isAuthenticated: state.auth.isAuthenticated,
+    user: state.auth.user
+  }));
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setError('');
+    dispatch(clearError());
 
-    // Basic validation
-    if (!email || !password) {
-      setError('Both email and password are required.');
+    // Enhanced validation
+    if (!email.trim()) {
+      dispatch(clearError());
+      return;
+    }
+    
+    if (!password.trim()) {
+      dispatch(clearError());
       return;
     }
 
-    // 3. Use navigate() for client-side routing
-    if (userType === 'student') {
-      navigate('/dashboard');
-    } else if (userType === 'institution') {
-      navigate('/admin/dashboard');
-    } else { // counsellor
-      navigate('/counsellor');
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      dispatch(clearError());
+      return;
+    }
+
+    try {
+      const result = await dispatch(loginUser({ email: email.trim(), password }));
+      
+      if (loginUser.fulfilled.match(result)) {
+        const userType = result.payload.data.user.userType;
+        
+        // Route based on user type - only after successful login
+        if (userType === 'admin') {
+          navigate('/admin');
+        } else if (userType === 'collage_admin') {
+          navigate('/institution/dashboard');
+        } else if (userType === 'student') {
+          navigate('/student/dashboard');
+        } else if (userType === 'counsellor') {
+          navigate('/counsellor/dashboard');
+        } else {
+          // Default fallback
+          navigate('/dashboard');
+        }
+      }
+    } catch (err) {
+      // Error is handled by Redux
+      console.error('Login error:', err);
     }
   };
 
@@ -137,16 +174,29 @@ export default function UnifiedLoginPage() {
             </div>
 
             {error && (
-              <p className="text-sm text-red-600 bg-red-100 p-3 rounded-lg text-center">{error}</p>
+              <div className="p-4 rounded border text-red-700 bg-red-50 flex items-start" style={{borderColor:'#fecaca'}}>
+                <AlertCircle className="w-5 h-5 mr-2 mt-0.5" />
+                <div className="text-sm">{error}</div>
+              </div>
             )}
 
             <div>
               <button
                 type="submit"
-                className="w-full bg-[#2dc8ca] text-white py-3 px-4 rounded-lg font-semibold text-lg hover:opacity-90 transition-all duration-300 flex items-center justify-center space-x-2"
+                disabled={loading}
+                className="w-full bg-[#2dc8ca] text-white py-3 px-4 rounded-lg font-semibold text-lg hover:opacity-90 disabled:opacity-70 disabled:cursor-wait transition-all duration-300 flex items-center justify-center space-x-2"
               >
-                <LogIn className="w-6 h-6" />
-                <span>Sign In</span>
+                {loading ? (
+                  <>
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                    <span>Signing In...</span>
+                  </>
+                ) : (
+                  <>
+                    <LogIn className="w-6 h-6" />
+                    <span>Sign In</span>
+                  </>
+                )}
               </button>
             </div>
           </form>

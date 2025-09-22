@@ -84,7 +84,18 @@ const collegeRegistrationSlice = createSlice({
         state.loading = true; state.error = null;
       })
       .addCase(listCollegeRegistrations.fulfilled, (state, action) => {
-        state.loading = false; state.items = action.payload?.data || action.payload || [];
+        state.loading = false;
+        const payload = action.payload;
+        // Support ApiResponse shape { data: { items, ... } } or raw array
+        if (Array.isArray(payload)) {
+          state.items = payload;
+        } else if (payload?.data?.items) {
+          state.items = payload.data.items;
+        } else if (payload?.data) {
+          state.items = payload.data;
+        } else {
+          state.items = [];
+        }
       })
       .addCase(listCollegeRegistrations.rejected, (state, action) => {
         state.loading = false; state.error = action.payload || action.error;
