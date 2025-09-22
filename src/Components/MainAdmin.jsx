@@ -303,113 +303,58 @@
 // };
 
 // export default CollegeAdminDashboard;
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Check, X, Eye, MapPin, Users, Calendar, Filter, Search, FileText, Globe, Mail, User } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { listCollegeRegistrations, approveCollegeRegistration, rejectCollegeRegistration } from '../store/slices/collegeRegistrationSlice';
+import api from '../api/client';
 
 const CollegeAdminDashboard = () => {
-  const [colleges, setColleges] = useState([
-    {
-      id: 1,
-      collegeName: "St. Xavier's College",
-      collegeType: "Private",
-      domain: "www.xaviers.edu",
-      nameOfApplicant: "Dr. Rajesh Kumar",
-      designation: "Principal",
-      verifiedCollegeDocument: "college_verification_001.pdf",
-      proofOfDesignation: "appointment_letter_001.pdf",
-      email: "principal@xaviers.edu",
-      password: "********",
-      status: "pending",
-      appliedDate: "2024-09-20",
-      location: "Mumbai, Maharashtra"
-    },
-    {
-      id: 2,
-      collegeName: "Delhi University",
-      collegeType: "Government",
-      domain: "www.du.ac.in",
-      nameOfApplicant: "Prof. Meera Sharma",
-      designation: "Registrar",
-      verifiedCollegeDocument: "du_verification_002.pdf",
-      proofOfDesignation: "registrar_appointment_002.pdf",
-      email: "registrar@du.ac.in",
-      password: "********",
-      status: "pending",
-      appliedDate: "2024-09-19",
-      location: "New Delhi, Delhi"
-    },
-    {
-      id: 3,
-      collegeName: "Indian Institute of Technology",
-      collegeType: "Autonomous",
-      domain: "www.iitm.ac.in",
-      nameOfApplicant: "Dr. Anil Krishnan",
-      designation: "Dean Academic Affairs",
-      verifiedCollegeDocument: "iit_verification_003.pdf",
-      proofOfDesignation: "dean_appointment_003.pdf",
-      email: "dean@iitm.ac.in",
-      password: "********",
-      status: "pending",
-      appliedDate: "2024-09-18",
-      location: "Chennai, Tamil Nadu"
-    },
-    {
-      id: 4,
-      collegeName: "Christ University",
-      collegeType: "Private",
-      domain: "www.christuniversity.in",
-      nameOfApplicant: "Dr. Sarah Thomas",
-      designation: "Vice Chancellor",
-      verifiedCollegeDocument: "christ_verification_004.pdf",
-      proofOfDesignation: "vc_appointment_004.pdf",
-      email: "vc@christuniversity.in",
-      password: "********",
-      status: "approved",
-      appliedDate: "2024-09-15",
-      location: "Bangalore, Karnataka"
-    },
-    {
-      id: 5,
-      collegeName: "Jadavpur University",
-      collegeType: "Government",
-      domain: "www.jaduniv.edu.in",
-      nameOfApplicant: "Prof. Sunil Banerjee",
-      designation: "Pro-Vice Chancellor",
-      verifiedCollegeDocument: "ju_verification_005.pdf",
-      proofOfDesignation: "pvc_appointment_005.pdf",
-      email: "pvc@jaduniv.edu.in",
-      password: "********",
-      status: "rejected",
-      appliedDate: "2024-09-14",
-      location: "Kolkata, West Bengal"
-    }
-  ]);
+  const dispatch = useDispatch();
+  const { items, loading } = useSelector((s) => s.collegeRegistration);
 
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [appointmentIds, setAppointmentIds] = useState({});
 
-  const handleApprove = (id) => {
-    setColleges(colleges.map(college => 
-      college.id === id ? { ...college, status: 'approved' } : college
-    ));
-  };
+  useEffect(() => {
+    dispatch(listCollegeRegistrations());
+  }, [dispatch]);
 
-  const handleReject = (id) => {
-    setColleges(colleges.map(college => 
-      college.id === id ? { ...college, status: 'rejected' } : college
-    ));
-  };
+  const normalized = useMemo(() => {
+    return (items || []).map((r) => ({
+      _id: r._id || r.id,
+      collegeName: r.collegeName,
+      collegeType: r.collegeType,
+      domain: r.domain,
+      nameOfApplicant: r.nameOfApplicant,
+      designation: r.designation,
+      verifiedCollegeDocument: r.verifiedCollegeDocument,
+      proofOfDesignation: r.proofOfDesignation,
+      email: r.email,
+      status: String(r.status || 'Pending'),
+      createdAt: r.createdAt,
+    }));
+  }, [items]);
 
-  const filteredColleges = colleges.filter(college => {
-    const matchesFilter = filter === 'all' || college.status === filter;
-    const matchesSearch = college.collegeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         college.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         college.nameOfApplicant.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
+  const filteredColleges = useMemo(() => {
+    const lcTerm = searchTerm.toLowerCase();
+    return normalized.filter((college) => {
+      const statusLc = String(college.status || '').toLowerCase();
+      const matchesFilter = filter === 'all' || statusLc === filter;
+      const matchesSearch =
+        (college.collegeName || '').toLowerCase().includes(lcTerm) ||
+        (college.domain || '').toLowerCase().includes(lcTerm) ||
+        (college.nameOfApplicant || '').toLowerCase().includes(lcTerm) ||
+        (college.collegeType || '').toLowerCase().includes(lcTerm) ||
+        (college.email || '').toLowerCase().includes(lcTerm);
+      return matchesFilter && matchesSearch;
+    });
+  }, [normalized, filter, searchTerm]);
 
   const getStatusColor = (status) => {
-    switch (status) {
+    const s = String(status || '').toLowerCase();
+    switch (s) {
       case 'approved': return 'bg-green-100 text-green-800';
       case 'rejected': return 'bg-red-100 text-red-800';
       case 'pending': return 'bg-yellow-100 text-yellow-800';
@@ -417,9 +362,39 @@ const CollegeAdminDashboard = () => {
     }
   };
 
-  const pendingCount = colleges.filter(c => c.status === 'pending').length;
-  const approvedCount = colleges.filter(c => c.status === 'approved').length;
-  const rejectedCount = colleges.filter(c => c.status === 'rejected').length;
+  const viewFile = async (registrationId, kind) => {
+    try {
+      const url = kind === 'verified'
+        ? `/registration/college-registrations/${registrationId}/files/verified?inline=true`
+        : `/registration/college-registrations/${registrationId}/files/proof?inline=true`;
+      const res = await api.get(url, { responseType: 'blob' });
+      const blob = new Blob([res.data], { type: res.headers['content-type'] || 'application/octet-stream' });
+      const fileURL = URL.createObjectURL(blob);
+      window.open(fileURL, '_blank');
+    } catch (e) {
+      alert('Failed to open file');
+    }
+  };
+
+  const handleApprove = async (id) => {
+    await dispatch(approveCollegeRegistration(id));
+    const apptId = appointmentIds[id] || appointmentIds[String(id)] || '';
+    if (apptId) {
+      try { await api.patch(`/appointments/${apptId}/status`, { status: 'Approved' }); } catch (_) {}
+    }
+  };
+
+  const handleReject = async (id) => {
+    await dispatch(rejectCollegeRegistration(id));
+    const apptId = appointmentIds[id] || appointmentIds[String(id)] || '';
+    if (apptId) {
+      try { await api.patch(`/appointments/${apptId}/status`, { status: 'Rejected' }); } catch (_) {}
+    }
+  };
+
+  const pendingCount = normalized.filter(c => String(c.status).toLowerCase() === 'pending').length;
+  const approvedCount = normalized.filter(c => String(c.status).toLowerCase() === 'approved').length;
+  const rejectedCount = normalized.filter(c => String(c.status).toLowerCase() === 'rejected').length;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -456,7 +431,7 @@ const CollegeAdminDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-500">Total Applications</p>
-                <p className="text-3xl font-bold text-gray-900">{colleges.length}</p>
+                <p className="text-3xl font-bold text-gray-900">{normalized.length}</p>
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                 <Users className="w-6 h-6 text-blue-600" />
@@ -533,8 +508,11 @@ const CollegeAdminDashboard = () => {
 
         {/* College List */}
         <div className="space-y-4">
-          {filteredColleges.map((college) => (
-            <div key={college.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+          {loading && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 text-gray-600">Loading registrations...</div>
+          )}
+          {!loading && filteredColleges.map((college) => (
+            <div key={college._id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
               <div className="flex flex-col space-y-6">
                 {/* Header Section */}
                 <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between space-y-4 lg:space-y-0">
@@ -545,7 +523,8 @@ const CollegeAdminDashboard = () => {
                         <div className="flex items-center space-x-4 mt-1 text-sm text-gray-500">
                           <div className="flex items-center">
                             <MapPin className="w-4 h-4 mr-1" />
-                            {college.location}
+                            {/* location not in schema; keeping placeholder */}
+                            <span className="italic">N/A</span>
                           </div>
                           <span>•</span>
                           <span>{college.collegeType}</span>
@@ -557,7 +536,7 @@ const CollegeAdminDashboard = () => {
                         </div>
                       </div>
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(college.status)}`}>
-                        {college.status.charAt(0).toUpperCase() + college.status.slice(1)}
+                        {String(college.status).charAt(0).toUpperCase() + String(college.status).slice(1)}
                       </span>
                     </div>
                   </div>
@@ -587,7 +566,7 @@ const CollegeAdminDashboard = () => {
                     </div>
                     <div>
                       <span className="text-sm font-medium text-gray-700">Applied Date:</span>
-                      <p className="text-gray-900">{college.appliedDate}</p>
+                      <p className="text-gray-900">{college.createdAt ? new Date(college.createdAt).toLocaleString() : '—'}</p>
                     </div>
                   </div>
                 </div>
@@ -602,18 +581,18 @@ const CollegeAdminDashboard = () => {
                     <div className="flex items-center justify-between bg-white rounded-lg p-3 border border-blue-200">
                       <div>
                         <span className="text-sm font-medium text-gray-700">College Verification</span>
-                        <p className="text-xs text-gray-500">{college.verifiedCollegeDocument}</p>
+                        <p className="text-xs text-gray-500">{college.verifiedCollegeDocument?.filename || '—'}</p>
                       </div>
-                      <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">
+                      <button onClick={() => viewFile(college._id, 'verified')} className="text-blue-600 hover:text-blue-800 font-medium text-sm">
                         View
                       </button>
                     </div>
                     <div className="flex items-center justify-between bg-white rounded-lg p-3 border border-blue-200">
                       <div>
                         <span className="text-sm font-medium text-gray-700">Designation Proof</span>
-                        <p className="text-xs text-gray-500">{college.proofOfDesignation}</p>
+                        <p className="text-xs text-gray-500">{college.proofOfDesignation?.filename || '—'}</p>
                       </div>
-                      <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">
+                      <button onClick={() => viewFile(college._id, 'proof')} className="text-blue-600 hover:text-blue-800 font-medium text-sm">
                         View
                       </button>
                     </div>
@@ -623,26 +602,35 @@ const CollegeAdminDashboard = () => {
                 {/* Action Buttons */}
                 <div className="flex items-center justify-between pt-4 border-t border-gray-200">
                   <div className="text-sm text-gray-500">
-                    Application ID: #{college.id.toString().padStart(4, '0')}
+                    Registration ID: {college._id}
                   </div>
                   
                   <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-2">
+                      <input
+                        value={appointmentIds[college._id] || ''}
+                        onChange={(e) => setAppointmentIds((prev) => ({ ...prev, [college._id]: e.target.value }))}
+                        placeholder="Appointment ID (optional)"
+                        className="px-2 py-1 border border-gray-300 rounded"
+                        style={{minWidth:'220px'}}
+                      />
+                    </div>
                     <button className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
                       <Eye className="w-4 h-4 mr-2" />
                       View Full Details
                     </button>
                     
-                    {college.status === 'pending' && (
+                    {String(college.status).toLowerCase() === 'pending' && (
                       <>
                         <button 
-                          onClick={() => handleReject(college.id)}
+                          onClick={() => handleReject(college._id)}
                           className="flex items-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
                         >
                           <X className="w-4 h-4 mr-2" />
                           Reject
                         </button>
                         <button 
-                          onClick={() => handleApprove(college.id)}
+                          onClick={() => handleApprove(college._id)}
                           className="flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
                         >
                           <Check className="w-4 h-4 mr-2" />
@@ -651,14 +639,14 @@ const CollegeAdminDashboard = () => {
                       </>
                     )}
                     
-                    {college.status === 'approved' && (
+                    {String(college.status).toLowerCase() === 'approved' && (
                       <div className="flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-lg">
                         <Check className="w-4 h-4 mr-2" />
                         Approved Application
                       </div>
                     )}
                     
-                    {college.status === 'rejected' && (
+                    {String(college.status).toLowerCase() === 'rejected' && (
                       <div className="flex items-center px-4 py-2 bg-red-100 text-red-800 rounded-lg">
                         <X className="w-4 h-4 mr-2" />
                         Rejected Application
@@ -671,7 +659,7 @@ const CollegeAdminDashboard = () => {
           ))}
         </div>
 
-        {filteredColleges.length === 0 && (
+        {!loading && filteredColleges.length === 0 && (
           <div className="text-center py-12">
             <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Search className="w-8 h-8 text-gray-400" />

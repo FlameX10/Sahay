@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 import './App.css'
 import Homepage from './Components/HomePage'
 import InstitutionRegistration from './Components/InstitutionRegistration'
@@ -17,15 +19,122 @@ import Meditation from './Components/Meditation'
 import Exercise from './Components/Exercise'
 import AdminAnalyticsDashboard from './Components/AdminAnalyticsDashboard'  
 import MainAdmin from './Components/MainAdmin'
+import ProtectedRoute from './Components/ProtectedRoute'
+import PublicRoute from './Components/PublicRoute'
+import { initializeAuth } from './store/slices/authSlice'
 import AssessmentFlow from './Components/AssessmentFlow';
 import Chatbot from './Components/Chatbot';
+
 function App() {
+  const dispatch = useDispatch();
+
+  // Initialize auth state from localStorage on app load
+  useEffect(() => {
+    dispatch(initializeAuth());
+  }, [dispatch]);
+
   return (
     <Router>
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<Homepage />} />
         <Route path="/institution-registration" element={<InstitutionRegistration />} />
         <Route path="/student-registration" element={<StudentRegistration />} />
+        <Route path="/login" element={
+          <PublicRoute>
+            <LoginPage />
+          </PublicRoute>
+        } />
+        
+        {/* Protected Student Routes */}
+        <Route path="/dashboard" element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <Sahay />
+          </ProtectedRoute>
+        } />
+        <Route path="/booking" element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <BookCounselor />
+          </ProtectedRoute>
+        } />
+        <Route path="/checkin" element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <DailyCheckIn />
+          </ProtectedRoute>
+        } />
+        <Route path="/resources" element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <PsychoeducationalResourceHub />
+          </ProtectedRoute>
+        } />
+        <Route path="/community" element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <PeerSupport />
+          </ProtectedRoute>
+        } />
+        <Route path="/meditation" element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <Meditation />
+          </ProtectedRoute>
+        } />
+        <Route path="/exercise" element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <Exercise />
+          </ProtectedRoute>
+        } />
+        
+        {/* Protected Admin Routes */}
+        <Route path="/admin" element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <MainAdmin />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/dashboard" element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/counselors" element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <ManageCounselors />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/peer-support" element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <PeerSupportManagement />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/analytics" element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminAnalyticsDashboard />
+          </ProtectedRoute>
+        } />
+        
+        {/* Protected College Admin Routes */}
+        <Route path="/institution/dashboard" element={
+          <ProtectedRoute allowedRoles={['collage_admin']}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        } />
+        
+        {/* Protected Counsellor Routes */}
+        <Route path="/counsellor" element={
+          <ProtectedRoute allowedRoles={['counsellor']}>
+            <CounselorDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/counsellor/dashboard" element={
+          <ProtectedRoute allowedRoles={['counsellor']}>
+            <CounselorDashboard />
+          </ProtectedRoute>
+        } />
+        
+        {/* Protected Student Dashboard */}
+        <Route path="/student/dashboard" element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <Sahay />
+          </ProtectedRoute>
+        } />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/dashboard" element={<Sahay />} />
         <Route path="/booking" element={<BookCounselor />} />
@@ -45,7 +154,6 @@ function App() {
         <Route path="/admin" element={<MainAdmin/>} />
       </Routes>
     </Router>
-    
   )
 }
 

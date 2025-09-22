@@ -1,79 +1,64 @@
 import React, { useState } from 'react';
 import { 
-  Heart, Shield, Users, Upload, FileText, CheckCircle, 
-  AlertCircle, ArrowRight, ArrowLeft, Building, Mail, Phone, 
-  User, GraduationCap, Award, CreditCard, FileCheck, MessageCircle, Loader2, Lock
+  Heart, Upload, FileText, CheckCircle, 
+  AlertCircle, ArrowRight, ArrowLeft, Building, Mail, 
+  User, GraduationCap, FileCheck, Loader2, Lock
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { createCollegeRegistration } from '../store/slices/collegeRegistrationSlice';
 
 export default function InstitutionRegistration() {
   const navigate= useNavigate();
+  const dispatch = useDispatch();
+  const createStatus = useSelector(state => state.collegeRegistration?.createStatus);
+  const createError = useSelector(state => state.collegeRegistration?.error);
+
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
-    // Part A: Basic Information
+    // Required fields
     collegeName: '',
-    collegeAddress: '',
-    city: '',
-    state: '',
-    pincode: '',
-    nodalOfficerName: '',
-    nodalOfficerDesignation: '',
-    nodalOfficerPhone: '',
-    officialEmail: '',
+    collegeType: '',
+    domain: '',
+    nameOfApplicant: '',
+    designation: '',
+    email: '',
     password: '',
     confirmPassword: '',
-    
-    // Document uploads
-    documents: {
-      letterOfRequest: null,
-      affiliationCertificate: null,
-      regulatoryApproval: null,
-      gstCertificate: null
-    },
+
+    // Document uploads (two only)
+    verifiedCollegeDocument: null,
+    proofOfDesignation: null,
+
     consent: false
   });
 
   const [uploadedFiles, setUploadedFiles] = useState({
-    letterOfRequest: null,
-    affiliationCertificate: null,
-    regulatoryApproval: null,
-    gstCertificate: null
+    verifiedCollegeDocument: null,
+    proofOfDesignation: null
   });
 
   const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const steps = [
     { number: 1, title: 'Institution Details', description: 'Basic information' },
-    { number: 2, title: 'Nodal Officer', description: 'Contact & Credentials' },
-    { number: 3, title: 'Document Upload', description: 'Verification files' },
+    { number: 2, title: 'Applicant & Credentials', description: 'Contact & password' },
+    { number: 3, title: 'Documents', description: 'Verification files' },
     { number: 4, title: 'Review & Submit', description: 'Final confirmation' }
   ];
 
   const documentTypes = [
     {
-      key: 'letterOfRequest',
-      title: 'Letter of Request',
-      description: 'On official college letterhead, signed and stamped by Principal/Dean',
+      key: 'verifiedCollegeDocument',
+      title: 'Verified College Document',
+      description: 'Proof of college verification (PDF, JPG, PNG).',
       icon: <FileText className="w-6 h-6" />
     },
     {
-      key: 'affiliationCertificate',
-      title: 'Affiliation Certificate',
-      description: 'From your parent university (e.g., Savitribai Phule Pune University)',
+      key: 'proofOfDesignation',
+      title: 'Proof of Designation',
+      description: 'Document proving applicant’s designation (PDF, JPG, PNG).',
       icon: <GraduationCap className="w-6 h-6" />
-    },
-    {
-      key: 'regulatoryApproval',
-      title: 'Regulatory Approval',
-      description: 'Proof of approval from UGC, AICTE, or relevant regulatory body',
-      icon: <Award className="w-6 h-6" />
-    },
-    {
-      key: 'gstCertificate',
-      title: 'GST Certificate / PAN Card',
-      description: 'Tax registration documents of the institution',
-      icon: <CreditCard className="w-6 h-6" />
     }
   ];
 
@@ -89,9 +74,9 @@ export default function InstitutionRegistration() {
       setUploadedFiles(prev => ({ ...prev, [documentType]: file }));
       setFormData(prev => ({
         ...prev,
-        documents: { ...prev.documents, [documentType]: file }
+        [documentType]: file
       }));
-       if (errors[documentType]) {
+      if (errors[documentType]) {
         setErrors(prev => ({ ...prev, [documentType]: null }));
       }
     }
@@ -102,23 +87,18 @@ export default function InstitutionRegistration() {
     
     if (step === 1) {
       if (!formData.collegeName.trim()) newErrors.collegeName = 'College name is required';
-      if (!formData.collegeAddress.trim()) newErrors.collegeAddress = 'Address is required';
-      if (!formData.city.trim()) newErrors.city = 'City is required';
-      if (!formData.state) newErrors.state = 'State is required';
-      if (!formData.pincode.trim()) newErrors.pincode = 'Pincode is required';
-      else if (!/^[1-9][0-9]{5}$/.test(formData.pincode)) newErrors.pincode = 'Enter a valid 6-digit pincode';
+      if (!formData.collegeType.trim()) newErrors.collegeType = 'College type is required';
+      if (!formData.domain.trim()) newErrors.domain = 'Domain/website is required';
     }
     
     if (step === 2) {
-      if (!formData.nodalOfficerName.trim()) newErrors.nodalOfficerName = 'Nodal officer name is required';
-      if (!formData.nodalOfficerDesignation.trim()) newErrors.nodalOfficerDesignation = 'Designation is required';
-      if (!formData.nodalOfficerPhone.trim()) newErrors.nodalOfficerPhone = 'Phone number is required';
-      else if (!/^\+?[1-9][0-9]{7,14}$/.test(formData.nodalOfficerPhone)) newErrors.nodalOfficerPhone = 'Enter a valid phone number';
+      if (!formData.nameOfApplicant.trim()) newErrors.nameOfApplicant = 'Applicant name is required';
+      if (!formData.designation.trim()) newErrors.designation = 'Designation is required';
 
-      if (!formData.officialEmail.trim()) {
-        newErrors.officialEmail = 'Official email is required';
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.officialEmail) || formData.officialEmail.includes('@gmail.') || formData.officialEmail.includes('@yahoo.')) {
-        newErrors.officialEmail = 'Must be an official domain email (not Gmail/Yahoo)';
+      if (!formData.email.trim()) {
+        newErrors.email = 'Email is required';
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        newErrors.email = 'Enter a valid email address';
       }
 
       if (!formData.password) {
@@ -141,9 +121,9 @@ export default function InstitutionRegistration() {
     }
 
     if (step === 4) {
-        if (!formData.consent) {
-            newErrors.consent = 'You must agree to the terms before submitting.';
-        }
+      if (!formData.consent) {
+        newErrors.consent = 'You must agree to the terms before submitting.';
+      }
     }
     
     setErrors(newErrors);
@@ -162,21 +142,26 @@ export default function InstitutionRegistration() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateStep(4)) {
-      setIsSubmitting(true);
-      // Create a copy of formData and remove password fields for security before logging
-      const secureFormData = { ...formData };
-      delete secureFormData.password;
-      delete secureFormData.confirmPassword;
-      console.log("Submitting Form Data:", secureFormData);
+    if (!validateStep(4)) return;
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setIsSubmitting(false);
-      
-      // You can add your custom logic here after form submission
-      // For example: redirect, show custom success message, etc.
-    }
+    const multipart = new FormData();
+    multipart.append('collegeName', formData.collegeName);
+    multipart.append('collegeType', formData.collegeType);
+    multipart.append('domain', formData.domain);
+    multipart.append('nameOfApplicant', formData.nameOfApplicant);
+    multipart.append('designation', formData.designation);
+    multipart.append('email', formData.email);
+    multipart.append('password', formData.password);
+    if (formData.verifiedCollegeDocument) multipart.append('verifiedCollegeDocument', formData.verifiedCollegeDocument);
+    if (formData.proofOfDesignation) multipart.append('proofOfDesignation', formData.proofOfDesignation);
+
+    try {
+      const action = await dispatch(createCollegeRegistration(multipart));
+      if (createCollegeRegistration.fulfilled.match(action)) {
+        alert('Your registration has been submitted successfully. Once approved, you will receive an email notification. You can now log in.');
+        navigate('/login');
+      }
+    } catch {}
   };
 
   const renderStepIndicator = () => (
@@ -215,58 +200,39 @@ export default function InstitutionRegistration() {
         <div className="text-center mb-8">
             <Building className="w-16 h-16 text-[#2dc8ca] mx-auto mb-4" />
             <h3 className="text-2xl font-bold text-[#2e2f34] mb-2">Institution Details</h3>
-            <p className="text-[#767272]">Please provide your institution's official information.</p>
+            <p className="text-[#767272]">Provide your institution's basic information.</p>
         </div>
         <div className="grid md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-[#2e2f34] mb-2">Official College Name *</label>
-            <input
+              <label className="block text-sm font-medium text-[#2e2f34] mb-2">Official College Name *</label>
+              <input
                 type="text" value={formData.collegeName} onChange={(e) => handleInputChange('collegeName', e.target.value)}
                 className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#2dc8ca] focus:border-transparent ${errors.collegeName ? 'border-red-500' : ''}`}
                 style={{borderColor: errors.collegeName ? '#ef4444' : '#c8ced1'}}
                 placeholder="e.g., College of Engineering, Pune" />
-            {errors.collegeName && <p className="text-red-500 text-sm mt-1">{errors.collegeName}</p>}
-            </div>
-            <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-[#2e2f34] mb-2">Complete Address *</label>
-            <textarea
-                value={formData.collegeAddress} onChange={(e) => handleInputChange('collegeAddress', e.target.value)}
-                rows="3"
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#2dc8ca] focus:border-transparent ${errors.collegeAddress ? 'border-red-500' : ''}`}
-                style={{borderColor: errors.collegeAddress ? '#ef4444' : '#c8ced1'}}
-                placeholder="Street address, landmark, area" />
-            {errors.collegeAddress && <p className="text-red-500 text-sm mt-1">{errors.collegeAddress}</p>}
+              {errors.collegeName && <p className="text-red-500 text-sm mt-1">{errors.collegeName}</p>}
             </div>
             <div>
-            <label className="block text-sm font-medium text-[#2e2f34] mb-2">City *</label>
-            <input
-                type="text" value={formData.city} onChange={(e) => handleInputChange('city', e.target.value)}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#2dc8ca] focus:border-transparent ${errors.city ? 'border-red-500' : ''}`}
-                style={{borderColor: errors.city ? '#ef4444' : '#c8ced1'}}
-                placeholder="e.g., Pune" />
-            {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city}</p>}
+              <label className="block text-sm font-medium text-[#2e2f34] mb-2">College Type *</label>
+              <select
+                value={formData.collegeType} onChange={(e) => handleInputChange('collegeType', e.target.value)}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#2dc8ca] focus:border-transparent ${errors.collegeType ? 'border-red-500' : ''}`}
+                style={{borderColor: errors.collegeType ? '#ef4444' : '#c8ced1'}}>
+                <option value="">Select Type</option>
+                <option value="Government">Government</option>
+                <option value="Private">Private</option>
+                <option value="Autonomous">Autonomous</option>
+              </select>
+              {errors.collegeType && <p className="text-red-500 text-sm mt-1">{errors.collegeType}</p>}
             </div>
             <div>
-            <label className="block text-sm font-medium text-[#2e2f34] mb-2">State *</label>
-            <select
-                value={formData.state} onChange={(e) => handleInputChange('state', e.target.value)}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#2dc8ca] focus:border-transparent ${errors.state ? 'border-red-500' : ''}`}
-                style={{borderColor: errors.state ? '#ef4444' : '#c8ced1'}}>
-                <option value="">Select State</option>
-                <option value="Maharashtra">Maharashtra</option>
-                <option value="Karnataka">Karnataka</option>
-                <option value="Other">Other</option>
-            </select>
-            {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state}</p>}
-            </div>
-            <div>
-            <label className="block text-sm font-medium text-[#2e2f34] mb-2">PIN Code *</label>
-            <input
-                type="text" value={formData.pincode} onChange={(e) => handleInputChange('pincode', e.target.value.replace(/\D/g, ''))}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#2dc8ca] focus:border-transparent ${errors.pincode ? 'border-red-500' : ''}`}
-                style={{borderColor: errors.pincode ? '#ef4444' : '#c8ced1'}}
-                placeholder="e.g., 411005" maxLength="6" />
-            {errors.pincode && <p className="text-red-500 text-sm mt-1">{errors.pincode}</p>}
+              <label className="block text-sm font-medium text-[#2e2f34] mb-2">Domain/Website *</label>
+              <input
+                type="text" value={formData.domain} onChange={(e) => handleInputChange('domain', e.target.value)}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#2dc8ca] focus:border-transparent ${errors.domain ? 'border-red-500' : ''}`}
+                style={{borderColor: errors.domain ? '#ef4444' : '#c8ced1'}}
+                placeholder="e.g., coep.ac.in" />
+              {errors.domain && <p className="text-red-500 text-sm mt-1">{errors.domain}</p>}
             </div>
         </div>
     </div>
@@ -276,75 +242,65 @@ export default function InstitutionRegistration() {
     <div className="space-y-6 animate-fade-in">
         <div className="text-center mb-8">
             <User className="w-16 h-16 text-[#2dc8ca] mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-[#2e2f34] mb-2">Nodal Officer Details & Credentials</h3>
-            <p className="text-[#767272]">Enter the contact person's details and create their login password.</p>
+            <h3 className="text-2xl font-bold text-[#2e2f34] mb-2">Applicant Details & Credentials</h3>
+            <p className="text-[#767272]">Enter applicant info and create a password.</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
             <div>
-            <label className="block text-sm font-medium text-[#2e2f34] mb-2">Full Name *</label>
-            <input
-                type="text" value={formData.nodalOfficerName} onChange={(e) => handleInputChange('nodalOfficerName', e.target.value)}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#2dc8ca] focus:border-transparent ${errors.nodalOfficerName ? 'border-red-500' : ''}`}
-                style={{borderColor: errors.nodalOfficerName ? '#ef4444' : '#c8ced1'}}
+              <label className="block text-sm font-medium text-[#2e2f34] mb-2">Full Name of Applicant *</label>
+              <input
+                type="text" value={formData.nameOfApplicant} onChange={(e) => handleInputChange('nameOfApplicant', e.target.value)}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#2dc8ca] focus:border-transparent ${errors.nameOfApplicant ? 'border-red-500' : ''}`}
+                style={{borderColor: errors.nameOfApplicant ? '#ef4444' : '#c8ced1'}}
                 placeholder="e.g., Dr. Rajesh Kumar" />
-            {errors.nodalOfficerName && <p className="text-red-500 text-sm mt-1">{errors.nodalOfficerName}</p>}
+              {errors.nameOfApplicant && <p className="text-red-500 text-sm mt-1">{errors.nameOfApplicant}</p>}
             </div>
             <div>
-            <label className="block text-sm font-medium text-[#2e2f34] mb-2">Designation *</label>
-            <input
-                type="text" value={formData.nodalOfficerDesignation} onChange={(e) => handleInputChange('nodalOfficerDesignation', e.target.value)}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#2dc8ca] focus:border-transparent ${errors.nodalOfficerDesignation ? 'border-red-500' : ''}`}
-                style={{borderColor: errors.nodalOfficerDesignation ? '#ef4444' : '#c8ced1'}}
+              <label className="block text-sm font-medium text-[#2e2f34] mb-2">Designation *</label>
+              <input
+                type="text" value={formData.designation} onChange={(e) => handleInputChange('designation', e.target.value)}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#2dc8ca] focus:border-transparent ${errors.designation ? 'border-red-500' : ''}`}
+                style={{borderColor: errors.designation ? '#ef4444' : '#c8ced1'}}
                 placeholder="e.g., Dean of Student Affairs" />
-            {errors.nodalOfficerDesignation && <p className="text-red-500 text-sm mt-1">{errors.nodalOfficerDesignation}</p>}
+              {errors.designation && <p className="text-red-500 text-sm mt-1">{errors.designation}</p>}
             </div>
             <div>
-            <label className="block text-sm font-medium text-[#2e2f34] mb-2">Phone Number *</label>
-            <input
-                type="tel" value={formData.nodalOfficerPhone} onChange={(e) => handleInputChange('nodalOfficerPhone', e.target.value)}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#2dc8ca] focus:border-transparent ${errors.nodalOfficerPhone ? 'border-red-500' : ''}`}
-                style={{borderColor: errors.nodalOfficerPhone ? '#ef4444' : '#c8ced1'}}
-                placeholder="e.g., +919876543210" />
-            {errors.nodalOfficerPhone && <p className="text-red-500 text-sm mt-1">{errors.nodalOfficerPhone}</p>}
-            </div>
-            <div>
-            <label className="block text-sm font-medium text-[#2e2f34] mb-2">Official College Email *</label>
-            <input
-                type="email" value={formData.officialEmail} onChange={(e) => handleInputChange('officialEmail', e.target.value)}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#2dc8ca] focus:border-transparent ${errors.officialEmail ? 'border-red-500' : ''}`}
-                style={{borderColor: errors.officialEmail ? '#ef4444' : '#c8ced1'}}
+              <label className="block text-sm font-medium text-[#2e2f34] mb-2">Official Email (unique) *</label>
+              <input
+                type="email" value={formData.email} onChange={(e) => handleInputChange('email', e.target.value)}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#2dc8ca] focus:border-transparent ${errors.email ? 'border-red-500' : ''}`}
+                style={{borderColor: errors.email ? '#ef4444' : '#c8ced1'}}
                 placeholder="e.g., principal@coep.ac.in" />
-            {errors.officialEmail && <p className="text-red-500 text-sm mt-1">{errors.officialEmail}</p>}
+              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
             </div>
-            
             <div className="md:col-span-2 border-t pt-6 mt-2">
-                <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <label className="block text-sm font-medium text-[#2e2f34] mb-2">Create Password *</label>
-                        <div className="relative">
-                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8d949d]" />
-                            <input
-                                type="password" value={formData.password} onChange={(e) => handleInputChange('password', e.target.value)}
-                                className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#2dc8ca] focus:border-transparent ${errors.password ? 'border-red-500' : ''}`}
-                                style={{borderColor: errors.password ? '#ef4444' : '#c8ced1'}}
-                                placeholder="Minimum 8 characters" />
-                        </div>
-                        {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-[#2e2f34] mb-2">Confirm Password *</label>
-                        <div className="relative">
-                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8d949d]" />
-                            <input
-                                type="password" value={formData.confirmPassword} onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                                className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#2dc8ca] focus:border-transparent ${errors.confirmPassword ? 'border-red-500' : ''}`}
-                                style={{borderColor: errors.confirmPassword ? '#ef4444' : '#c8ced1'}}
-                                placeholder="Re-enter password" />
-                        </div>
-                        {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
-                    </div>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-[#2e2f34] mb-2">Create Password *</label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8d949d]" />
+                    <input
+                      type="password" value={formData.password} onChange={(e) => handleInputChange('password', e.target.value)}
+                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#2dc8ca] focus:border-transparent ${errors.password ? 'border-red-500' : ''}`}
+                      style={{borderColor: errors.password ? '#ef4444' : '#c8ced1'}}
+                      placeholder="Minimum 8 characters" />
+                  </div>
+                  {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#2e2f34] mb-2">Confirm Password *</label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8d949d]" />
+                    <input
+                      type="password" value={formData.confirmPassword} onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#2dc8ca] focus:border-transparent ${errors.confirmPassword ? 'border-red-500' : ''}`}
+                      style={{borderColor: errors.confirmPassword ? '#ef4444' : '#c8ced1'}}
+                      placeholder="Re-enter password" />
+                  </div>
+                  {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
+                </div>
+              </div>
             </div>
         </div>
     </div>
@@ -399,17 +355,16 @@ export default function InstitutionRegistration() {
                 <h4 className="font-semibold text-[#2e2f34] mb-4 flex items-center border-b pb-2"><Building className="w-5 h-5 mr-2 text-[#2dc8ca]" />Institution Details</h4>
                 <div className="grid md:grid-cols-2 gap-4 text-sm">
                     <div><span className="text-[#767272]">College Name:</span><p className="font-medium text-[#2e2f34]">{formData.collegeName}</p></div>
-                    <div><span className="text-[#767272]">City, State:</span><p className="font-medium text-[#2e2f34]">{formData.city}, {formData.state}</p></div>
-                    <div className="md:col-span-2"><span className="text-[#767272]">Address:</span><p className="font-medium text-[#2e2f34]">{formData.collegeAddress}, {formData.pincode}</p></div>
+                    <div><span className="text-[#767272]">Type:</span><p className="font-medium text-[#2e2f34]">{formData.collegeType}</p></div>
+                    <div className="md:col-span-2"><span className="text-[#767272]">Domain:</span><p className="font-medium text-[#2e2f34]">{formData.domain}</p></div>
                 </div>
             </div>
             <div>
-                <h4 className="font-semibold text-[#2e2f34] mb-4 flex items-center border-b pb-2"><User className="w-5 h-5 mr-2 text-[#2dc8ca]" />Nodal Officer Details</h4>
+                <h4 className="font-semibold text-[#2e2f34] mb-4 flex items-center border-b pb-2"><User className="w-5 h-5 mr-2 text-[#2dc8ca]" />Applicant Details</h4>
                 <div className="grid md:grid-cols-2 gap-4 text-sm">
-                    <div><span className="text-[#767272]">Name:</span><p className="font-medium text-[#2e2f34]">{formData.nodalOfficerName}</p></div>
-                    <div><span className="text-[#767272]">Designation:</span><p className="font-medium text-[#2e2f34]">{formData.nodalOfficerDesignation}</p></div>
-                    <div><span className="text-[#767272]">Phone:</span><p className="font-medium text-[#2e2f34]">{formData.nodalOfficerPhone}</p></div>
-                    <div><span className="text-[#767272]">Email:</span><p className="font-medium text-[#2e2f34]">{formData.officialEmail}</p></div>
+                    <div><span className="text-[#767272]">Name:</span><p className="font-medium text-[#2e2f34]">{formData.nameOfApplicant}</p></div>
+                    <div><span className="text-[#767272]">Designation:</span><p className="font-medium text-[#2e2f34]">{formData.designation}</p></div>
+                    <div className="md:col-span-2"><span className="text-[#767272]">Email:</span><p className="font-medium text-[#2e2f34]">{formData.email}</p></div>
                 </div>
             </div>
             <div>
@@ -438,6 +393,8 @@ export default function InstitutionRegistration() {
     </div>
   );
 
+  const isSubmitting = createStatus === 'loading';
+
   return (
     <div className="min-h-screen bg-[#eaf1f5] font-sans p-4 sm:p-8">
         <div className="max-w-4xl mx-auto">
@@ -459,22 +416,28 @@ export default function InstitutionRegistration() {
                     {currentStep === 3 && renderStep3()}
                     {currentStep === 4 && renderStep4()}
                 </div>
+                {createError && (
+                  <div className="mt-6 p-4 rounded border text-red-700 bg-red-50 flex items-start" style={{borderColor:'#fecaca'}}>
+                    <AlertCircle className="w-5 h-5 mr-2 mt-0.5" />
+                    <div className="text-sm">{createError?.message || 'Failed to submit. Please try again.'}</div>
+                  </div>
+                )}
                 {currentStep <= 4 && (
                     <div className="mt-12 pt-6 border-t flex justify-between items-center">
                         <button
-                            onClick={prevStep} disabled={currentStep === 1}
+                            onClick={prevStep} disabled={currentStep === 1 || isSubmitting}
                             className="bg-[#c8ced1] text-[#2e2f34] px-6 py-3 rounded-lg font-semibold hover:bg-[#b7c0d0] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center space-x-2">
                             <ArrowLeft className="w-5 h-5" /><span>Previous</span>
                         </button>
                         {currentStep < 4 ? (
                             <button
-                                onClick={nextStep}
-                                className="bg-[#2dc8ca] text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-all duration-300 flex items-center space-x-2">
+                                onClick={nextStep} disabled={isSubmitting}
+                                className="bg-[#2dc8ca] text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center space-x-2">
                                 <span>Next</span><ArrowRight className="w-5 h-5" />
                             </button>
                         ) : (
                             <button
-                                onClick={()=>navigate('/admin/dashboard')}
+                                onClick={handleSubmit} disabled={isSubmitting}
                                 className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 disabled:opacity-70 disabled:cursor-wait transition-all duration-300 flex items-center space-x-2">
                                 {isSubmitting ? (<><Loader2 className="w-5 h-5 animate-spin" /><span>Submitting...</span></>) : (<><CheckCircle className="w-5 h-5" /><span>Submit Application</span></>)}
                             </button>
