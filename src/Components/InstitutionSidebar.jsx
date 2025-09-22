@@ -22,12 +22,9 @@ const InstitutionSidebar = ({ sidebarOpen, setSidebarOpen }) => {
   // Navigation items, 'Settings' is handled separately at the bottom
   const sidebarItems = [
     { icon: BarChart3, label: 'Dashboard', href: '/admin/dashboard' },
-    { icon: MessageSquare, label: 'Peer Support', href: '/admin/peer-support' },
     { icon: UserPlus, label: 'Manage Counselors', href: '/admin/counselors' },
+    { icon: MessageSquare, label: 'Peer Support', href: '/admin/peer-support' },
     { icon: Users, label: 'Student Analytics', href: '/admin/analytics' },
-    { icon: Calendar, label: 'Appointments', href: '/admin/appointments' },
-    { icon: BookOpen, label: 'Resource Hub', href: '/admin/resources' },
-    { icon: Shield, label: 'Moderation', href: '/admin/moderation' },
   ];
 
   const handleNavigate = (path) => {

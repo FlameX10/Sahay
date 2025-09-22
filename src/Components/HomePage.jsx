@@ -463,10 +463,9 @@ export default function Homepage() {
                     <CheckCircle className="w-5 h-5" style={{color:'#889260'}} />
                   </div>
                   <div>
-                    <h4 className="font-semibold mb-2" style={{color:'#2e2f34'}}>Institutional Integration</h4>
+                    <h4 className="font-semibold mb-2" style={{color:'#2e2f34'}}>  </h4>
                     <p style={{color:'#767272'}}>Deep integration with college systems while maintaining student privacy</p>
                   </div>
-                  
                 </div>
               </div>
             </div>

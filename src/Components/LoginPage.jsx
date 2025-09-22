@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'; // 1. Import useNavigate
 import { LogIn, User, Building, Mail, Lock, Heart, ArrowRight } from 'lucide-react';
 
 export default function UnifiedLoginPage() {
-  const [userType, setUserType] = useState('student'); // 'student' or 'institution'
+  const [userType, setUserType] = useState('student'); // 'student' | 'institution' | 'counsellor'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -22,16 +22,18 @@ export default function UnifiedLoginPage() {
     // 3. Use navigate() for client-side routing
     if (userType === 'student') {
       navigate('/dashboard');
-    } else { // userType is 'institution'
+    } else if (userType === 'institution') {
+      navigate('/admin/dashboard');
+    } else { // counsellor
       navigate('/counsellor');
     }
   };
 
   const UserTypeToggle = () => (
-    <div className="bg-[#f2f7eb] p-1 rounded-full flex w-full max-w-sm mx-auto mb-8">
+    <div className="bg-[#f2f7eb] p-1 rounded-full flex w-full max-w-xl mx-auto mb-8">
       <button
         onClick={() => setUserType('student')}
-        className={`w-1/2 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
+        className={`w-1/3 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
           userType === 'student' ? 'bg-white text-[#2e2f34] shadow-md' : 'text-[#767272]'
         }`}
       >
@@ -40,12 +42,21 @@ export default function UnifiedLoginPage() {
       </button>
       <button
         onClick={() => setUserType('institution')}
-        className={`w-1/2 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
+        className={`w-1/3 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
           userType === 'institution' ? 'bg-white text-[#2e2f34] shadow-md' : 'text-[#767272]'
         }`}
       >
         <Building className="w-4 h-4" />
         <span>Institution</span>
+      </button>
+      <button
+        onClick={() => setUserType('counsellor')}
+        className={`w-1/3 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
+          userType === 'counsellor' ? 'bg-white text-[#2e2f34] shadow-md' : 'text-[#767272]'
+        }`}
+      >
+        <User className="w-4 h-4" />
+        <span>Counsellor</span>
       </button>
     </div>
   );
@@ -71,14 +82,14 @@ export default function UnifiedLoginPage() {
               Welcome Back
             </h2>
             <p className="text-[#767272]">
-              Please sign in to your {userType === 'student' ? 'student' : 'institutional'} account.
+              Please sign in to your {userType === 'student' ? 'student' : userType === 'institution' ? 'institutional' : 'counsellor'} account.
             </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-[#2e2f34] mb-2">
-                {userType === 'student' ? 'Student Email' : 'Official College Email'}
+                {userType === 'student' ? 'Student Email' : userType === 'institution' ? 'Official College Email' : 'Counsellor Email'}
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8d949d]" />
@@ -87,7 +98,7 @@ export default function UnifiedLoginPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder={userType === 'student' ? 'your.name@college.ac.in' : 'principal@college.ac.in'}
+                  placeholder={userType === 'student' ? 'your.name@college.ac.in' : userType === 'institution' ? 'principal@college.ac.in' : 'counsellor@college.ac.in'}
                   className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#2dc8ca] focus:border-transparent"
                   style={{borderColor:'#c8ced1'}}
                   required
@@ -140,13 +151,15 @@ export default function UnifiedLoginPage() {
             </div>
           </form>
 
-          <p className="mt-8 text-center text-sm text-[#767272]">
-            {userType === 'student' ? "Don't have an account?" : "Haven't registered your institution?"}{' '}
-            <a href={userType === 'student' ? '/student-registration' : '/institution-registration'} className="font-medium text-[#2dc8ca] hover:underline">
-              Register here
-              <ArrowRight className="inline ml-1 w-4 h-4"/>
-            </a>
-          </p>
+          {userType !== 'counsellor' && (
+            <p className="mt-8 text-center text-sm text-[#767272]">
+              {userType === 'student' ? "Don't have an account?" : "Haven't registered your institution?"}{' '}
+              <a href={userType === 'student' ? '/student-registration' : '/institution-registration'} className="font-medium text-[#2dc8ca] hover:underline">
+                Register here
+                <ArrowRight className="inline ml-1 w-4 h-4"/>
+              </a>
+            </p>
+          )}
         </div>
       </div>
     </div>

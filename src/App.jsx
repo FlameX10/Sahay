@@ -15,6 +15,7 @@ import CounselorDashboard from './Components/CounsellorDashboard'
 import PeerSupport from './Components/PeerSupport'
 import Meditation from './Components/Meditation'
 import Exercise from './Components/Exercise'
+import AdminAnalyticsDashboard from './Components/AdminAnalyticsDashboard'  
 function App() {
   return (
     <Router>
@@ -34,6 +35,7 @@ function App() {
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/counselors" element={<ManageCounselors />} />
         <Route path="/admin/peer-support" element={<PeerSupportManagement />} />
+        <Route path="/admin/analytics" element={<AdminAnalyticsDashboard />} />
         <Route path="/counsellor" element={<CounselorDashboard />} />
       </Routes>
     </Router>
