@@ -50,7 +50,7 @@ export default function UnifiedLoginPage() {
         if (userType === 'admin') {
           navigate('/admin');
         } else if (userType === 'collage_admin') {
-          navigate('/institution/dashboard');
+          navigate('/collage_admin/dashboard');
         } else if (userType === 'student') {
           navigate('/student/dashboard');
         } else if (userType === 'counsellor') {

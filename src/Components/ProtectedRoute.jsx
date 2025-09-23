@@ -21,7 +21,7 @@ const ProtectedRoute = ({ children, allowedRoles = [], fallbackPath = '/login' }
         case 'admin':
           return '/admin';
         case 'collage_admin':
-          return '/institution/dashboard';
+          return '/collage_admin/dashboard';
         case 'student':
           return '/student/dashboard';
         case 'counsellor':

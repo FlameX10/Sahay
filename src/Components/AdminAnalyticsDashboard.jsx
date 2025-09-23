@@ -1,383 +1,152 @@
-import React, { useState } from 'react';
-import { Check, X, Eye, MapPin, Users, Calendar, Filter, Search, FileText, Globe, Mail, User } from 'lucide-react';
+import React, { useState } from "react";
+import Sidebar from "./InstitutionSidebar";
+import { Users } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
-const CollegeAdminDashboard = () => {
-  const [colleges, setColleges] = useState([
-    {
-      id: 1,
-      collegeName: "St. Xavier's College",
-      collegeType: "Private",
-      domain: "www.xaviers.edu",
-      nameOfApplicant: "Dr. Rajesh Kumar",
-      designation: "Principal",
-      verifiedCollegeDocument: "college_verification_001.pdf",
-      proofOfDesignation: "appointment_letter_001.pdf",
-      email: "principal@xaviers.edu",
-      password: "********",
-      status: "pending",
-      appliedDate: "2024-09-20",
-      location: "Mumbai, Maharashtra"
-    },
-    {
-      id: 2,
-      collegeName: "Delhi University",
-      collegeType: "Government",
-      domain: "www.du.ac.in",
-      nameOfApplicant: "Prof. Meera Sharma",
-      designation: "Registrar",
-      verifiedCollegeDocument: "du_verification_002.pdf",
-      proofOfDesignation: "registrar_appointment_002.pdf",
-      email: "registrar@du.ac.in",
-      password: "********",
-      status: "pending",
-      appliedDate: "2024-09-19",
-      location: "New Delhi, Delhi"
-    },
-    {
-      id: 3,
-      collegeName: "Indian Institute of Technology",
-      collegeType: "Autonomous",
-      domain: "www.iitm.ac.in",
-      nameOfApplicant: "Dr. Anil Krishnan",
-      designation: "Dean Academic Affairs",
-      verifiedCollegeDocument: "iit_verification_003.pdf",
-      proofOfDesignation: "dean_appointment_003.pdf",
-      email: "dean@iitm.ac.in",
-      password: "********",
-      status: "pending",
-      appliedDate: "2024-09-18",
-      location: "Chennai, Tamil Nadu"
-    },
-    {
-      id: 4,
-      collegeName: "Christ University",
-      collegeType: "Private",
-      domain: "www.christuniversity.in",
-      nameOfApplicant: "Dr. Sarah Thomas",
-      designation: "Vice Chancellor",
-      verifiedCollegeDocument: "christ_verification_004.pdf",
-      proofOfDesignation: "vc_appointment_004.pdf",
-      email: "vc@christuniversity.in",
-      password: "********",
-      status: "approved",
-      appliedDate: "2024-09-15",
-      location: "Bangalore, Karnataka"
-    },
-    {
-      id: 5,
-      collegeName: "Jadavpur University",
-      collegeType: "Government",
-      domain: "www.jaduniv.edu.in",
-      nameOfApplicant: "Prof. Sunil Banerjee",
-      designation: "Pro-Vice Chancellor",
-      verifiedCollegeDocument: "ju_verification_005.pdf",
-      proofOfDesignation: "pvc_appointment_005.pdf",
-      email: "pvc@jaduniv.edu.in",
-      password: "********",
-      status: "rejected",
-      appliedDate: "2024-09-14",
-      location: "Kolkata, West Bengal"
-    }
-  ]);
+// Data
+const dailyActivityData = [
+  { day: "Mon", booked: 12, completed: 10 },
+  { day: "Tue", booked: 15, completed: 14 },
+  { day: "Wed", booked: 10, completed: 8 },
+  { day: "Thu", booked: 14, completed: 12 },
+  { day: "Fri", booked: 18, completed: 15 },
+  { day: "Sat", booked: 8, completed: 7 },
+  { day: "Sun", booked: 5, completed: 4 },
+];
 
-  const [filter, setFilter] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+const progressTrendData = [
+  { week: "Week 1", progress: 45 },
+  { week: "Week 2", progress: 52 },
+  { week: "Week 3", progress: 60 },
+  { week: "Week 4", progress: 67 },
+  { week: "Week 5", progress: 70 },
+  { week: "Week 6", progress: 75 },
+];
 
-  const handleApprove = (id) => {
-    setColleges(colleges.map(college => 
-      college.id === id ? { ...college, status: 'approved' } : college
-    ));
-  };
+const issueDistributionData = [
+  { name: "Anxiety", value: 30 },
+  { name: "Stress", value: 25 },
+  { name: "Depression", value: 20 },
+  { name: "Academic Pressure", value: 15 },
+  { name: "Other", value: 10 },
+];
 
-  const handleReject = (id) => {
-    setColleges(colleges.map(college => 
-      college.id === id ? { ...college, status: 'rejected' } : college
-    ));
-  };
+const COLORS = ["#22c55e", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6"];
 
-  const filteredColleges = colleges.filter(college => {
-    const matchesFilter = filter === 'all' || college.status === filter;
-    const matchesSearch = college.collegeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         college.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         college.nameOfApplicant.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'approved': return 'bg-green-100 text-green-800';
-      case 'rejected': return 'bg-red-100 text-red-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const pendingCount = colleges.filter(c => c.status === 'pending').length;
-  const approvedCount = colleges.filter(c => c.status === 'approved').length;
-  const rejectedCount = colleges.filter(c => c.status === 'rejected').length;
+export default function StudentAnalytics() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-teal-400 to-teal-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">A</span>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">College Approval System</h1>
-                <p className="text-sm text-gray-500">Manage college registration requests</p>
-              </div>
+    <div className="min-h-screen bg-[#eaf1f5] flex">
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <div className="flex-1 flex flex-col">
+        {/* Mobile Header */}
+        <div className="lg:hidden sticky top-0 z-30 bg-[#eaf1f5]/80 backdrop-blur">
+          <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: "#c8ced1" }}>
+            <button onClick={() => setSidebarOpen(true)} className="p-2 rounded-lg hover:bg-[#f2f7eb]">
+              <Users className="w-6 h-6 text-[#2e2f34]" />
+            </button>
+            <div className="flex items-center space-x-2">
+              <Users className="w-5 h-5 text-[#3d9098]" />
+              <span className="font-semibold text-[#2e2f34]">Student Analytics</span>
             </div>
-            <div className="flex items-center space-x-4">
-              <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">Admin Dashboard</p>
-                <p className="text-xs text-gray-500">Tuesday, Sep 23 2:17 AM</p>
-              </div>
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">A</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Stats Cards */}
-      <div className="max-w-7xl mx-auto px-6 py-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-500">Total Applications</p>
-                <p className="text-3xl font-bold text-gray-900">{colleges.length}</p>
-              </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Users className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-500">Pending Review</p>
-                <p className="text-3xl font-bold text-yellow-600">{pendingCount}</p>
-              </div>
-              <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                <Calendar className="w-6 h-6 text-yellow-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-500">Approved</p>
-                <p className="text-3xl font-bold text-green-600">{approvedCount}</p>
-              </div>
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <Check className="w-6 h-6 text-green-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-500">Rejected</p>
-                <p className="text-3xl font-bold text-red-600">{rejectedCount}</p>
-              </div>
-              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                <X className="w-6 h-6 text-red-600" />
-              </div>
-            </div>
+            <div className="w-6" />
           </div>
         </div>
 
-        {/* Filters and Search */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-            <div className="flex items-center space-x-4">
-              <Filter className="w-5 h-5 text-gray-400" />
-              <select 
-                value={filter} 
-                onChange={(e) => setFilter(e.target.value)}
-                className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-              >
-                <option value="all">All Applications</option>
-                <option value="pending">Pending Review</option>
-                <option value="approved">Approved</option>
-                <option value="rejected">Rejected</option>
-              </select>
-            </div>
-            
-            <div className="relative">
-              <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Search colleges..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 w-full md:w-80"
-              />
+        {/* Main Content */}
+        <main className="flex-1 overflow-y-auto p-6">
+          {/* Header */}
+          <div className="max-w-7xl mx-auto mb-6">
+            <div className="flex items-center space-x-3">
+              <div className="bg-[#3d9098] p-3 rounded-xl">
+                <Users className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-[#2e2f34] leading-tight">Student Analytics</h1>
+                <p className="text-[#767272]">Track student activity, progress trends, and common issues</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* College List */}
-        <div className="space-y-4">
-          {filteredColleges.map((college) => (
-            <div key={college.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
-              <div className="flex flex-col space-y-6">
-                {/* Header Section */}
-                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between space-y-4 lg:space-y-0">
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h3 className="text-xl font-semibold text-gray-900">{college.collegeName}</h3>
-                        <div className="flex items-center space-x-4 mt-1 text-sm text-gray-500">
-                          <div className="flex items-center">
-                            <MapPin className="w-4 h-4 mr-1" />
-                            {college.location}
-                          </div>
-                          <span>•</span>
-                          <span>{college.collegeType}</span>
-                          <span>•</span>
-                          <div className="flex items-center">
-                            <Globe className="w-4 h-4 mr-1" />
-                            {college.domain}
-                          </div>
-                        </div>
-                      </div>
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(college.status)}`}>
-                        {college.status.charAt(0).toUpperCase() + college.status.slice(1)}
-                      </span>
-                    </div>
-                  </div>
+          {/* Analytics Grid */}
+          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Daily Student Activity */}
+            <div className="bg-white rounded-xl p-6 shadow-sm border" style={{ borderColor: "#c8ced1" }}>
+              <h2 className="text-lg font-bold mb-4 text-[#2e2f34]">Daily Student Activity</h2>
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={dailyActivityData}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="day" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="booked" fill="#22c55e" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="completed" fill="#3b82f6" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Progress Trend */}
+            <div className="bg-white rounded-xl p-6 shadow-sm border" style={{ borderColor: "#c8ced1" }}>
+              <h2 className="text-lg font-bold mb-4 text-[#2e2f34]">Student Progress Trend</h2>
+              <ResponsiveContainer width="100%" height={250}>
+                <LineChart data={progressTrendData}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="week" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line
+                    type="monotone"
+                    dataKey="progress"
+                    stroke="#22c55e"
+                    strokeWidth={3}
+                    dot={false}
+                    activeDot={{ r: 6, fill: "#22c55e" }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+              <p className="text-sm text-[#767272] mt-2">+30% improvement in 6 weeks</p>
+            </div>
+
+            {/* Issues Distribution */}
+            <div className="bg-white rounded-xl p-6 shadow-sm border" style={{ borderColor: "#c8ced1" }}>
+              <h2 className="text-lg font-bold mb-4 text-[#2e2f34]">Issues Discussed</h2>
+              <ResponsiveContainer width="100%" height={250}>
+                <PieChart>
+                  <Pie
+                    data={issueDistributionData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {issueDistributionData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* KPIs */}
+            <div className="bg-white rounded-xl p-6 shadow-sm border flex flex-col items-center justify-center" style={{ borderColor: "#c8ced1" }}>
+              <h2 className="text-lg font-bold mb-2 text-[#2e2f34]">Key Counsellor Indicators</h2>
+              <div className="grid grid-cols-2 gap-6 mt-4 w-full">
+                <div className="text-center p-4 rounded-lg border" style={{ borderColor: "#c8ced1" }}>
+                  <p className="text-2xl font-bold text-[#2e2f34]">87%</p>
+                  <p className="text-sm text-[#767272]">Session Attendance</p>
                 </div>
-
-                {/* Applicant Information */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="text-lg font-medium text-gray-900 mb-3 flex items-center">
-                    <User className="w-5 h-5 mr-2 text-gray-600" />
-                    Applicant Information
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <span className="text-sm font-medium text-gray-700">Full Name:</span>
-                      <p className="text-gray-900">{college.nameOfApplicant}</p>
-                    </div>
-                    <div>
-                      <span className="text-sm font-medium text-gray-700">Designation:</span>
-                      <p className="text-gray-900">{college.designation}</p>
-                    </div>
-                    <div>
-                      <span className="text-sm font-medium text-gray-700">Email:</span>
-                      <div className="flex items-center">
-                        <Mail className="w-4 h-4 mr-2 text-gray-500" />
-                        <p className="text-gray-900">{college.email}</p>
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-sm font-medium text-gray-700">Applied Date:</span>
-                      <p className="text-gray-900">{college.appliedDate}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Documents Section */}
-                <div className="bg-blue-50 rounded-lg p-4">
-                  <h4 className="text-lg font-medium text-gray-900 mb-3 flex items-center">
-                    <FileText className="w-5 h-5 mr-2 text-blue-600" />
-                    Submitted Documents
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex items-center justify-between bg-white rounded-lg p-3 border border-blue-200">
-                      <div>
-                        <span className="text-sm font-medium text-gray-700">College Verification</span>
-                        <p className="text-xs text-gray-500">{college.verifiedCollegeDocument}</p>
-                      </div>
-                      <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">
-                        View
-                      </button>
-                    </div>
-                    <div className="flex items-center justify-between bg-white rounded-lg p-3 border border-blue-200">
-                      <div>
-                        <span className="text-sm font-medium text-gray-700">Designation Proof</span>
-                        <p className="text-xs text-gray-500">{college.proofOfDesignation}</p>
-                      </div>
-                      <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">
-                        View
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                  <div className="text-sm text-gray-500">
-                    Application ID: #{college.id.toString().padStart(4, '0')}
-                  </div>
-                  
-                  <div className="flex items-center space-x-3">
-                    <button className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
-                      <Eye className="w-4 h-4 mr-2" />
-                      View Full Details
-                    </button>
-                    
-                    {college.status === 'pending' && (
-                      <>
-                        <button 
-                          onClick={() => handleReject(college.id)}
-                          className="flex items-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-                        >
-                          <X className="w-4 h-4 mr-2" />
-                          Reject
-                        </button>
-                        <button 
-                          onClick={() => handleApprove(college.id)}
-                          className="flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-                        >
-                          <Check className="w-4 h-4 mr-2" />
-                          Approve
-                        </button>
-                      </>
-                    )}
-                    
-                    {college.status === 'approved' && (
-                      <div className="flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-lg">
-                        <Check className="w-4 h-4 mr-2" />
-                        Approved Application
-                      </div>
-                    )}
-                    
-                    {college.status === 'rejected' && (
-                      <div className="flex items-center px-4 py-2 bg-red-100 text-red-800 rounded-lg">
-                        <X className="w-4 h-4 mr-2" />
-                        Rejected Application
-                      </div>
-                    )}
-                  </div>
+                <div className="text-center p-4 rounded-lg border" style={{ borderColor: "#c8ced1" }}>
+                  <p className="text-2xl font-bold text-[#2e2f34]">32</p>
+                  <p className="text-sm text-[#767272]">Avg. Students Supported</p>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-
-        {filteredColleges.length === 0 && (
-          <div className="text-center py-12">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="w-8 h-8 text-gray-400" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No colleges found</h3>
-            <p className="text-gray-500">Try adjusting your search or filter criteria</p>
           </div>
-        )}
+        </main>
       </div>
     </div>
   );
-};
-
-export default CollegeAdminDashboard;
+}

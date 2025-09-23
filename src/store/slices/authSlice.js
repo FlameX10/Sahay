@@ -35,6 +35,7 @@ export const logoutUser = createAsyncThunk(
       // Clear token from localStorage
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      localStorage.removeItem('profile');
       return null;
     } catch (err) {
       return rejectWithValue({ message: 'Logout failed' });
@@ -47,11 +48,14 @@ const initializeAuthState = () => {
   try {
     const token = localStorage.getItem('token');
     const userStr = localStorage.getItem('user');
+    const profileStr = localStorage.getItem('profile');
     
     if (token && userStr) {
       const user = JSON.parse(userStr);
+      const profile = profileStr ? JSON.parse(profileStr) : null;
       return {
         user,
+        profile,
         token,
         loading: false,
         error: null,
@@ -63,10 +67,12 @@ const initializeAuthState = () => {
     // Clear corrupted data
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('profile');
   }
   
   return {
     user: null,
+    profile: null,
     token: null,
     loading: false,
     error: null,
@@ -84,20 +90,31 @@ const authSlice = createSlice({
       state.error = null;
     },
     setCredentials: (state, action) => {
-      const { user, accessToken } = action.payload;
+      const { profile, user, accessToken } = action.payload;
+      console.log('Setting credentials:', action.payload);
       state.user = user;
+      state.profile = profile;
       state.token = accessToken;
       state.isAuthenticated = true;
       state.error = null;
+      
+      // Store in localStorage
+      localStorage.setItem('token', accessToken);
+      localStorage.setItem('user', JSON.stringify(user));
+      if (profile) {
+        localStorage.setItem('profile', JSON.stringify(profile));
+      }
     },
     clearCredentials: (state) => {
       state.user = null;
+      state.profile = null;
       state.token = null;
       state.isAuthenticated = false;
       state.error = null;
       // Clear localStorage
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      localStorage.removeItem('profile');
     },
     initializeAuth: (state) => {
       const authState = initializeAuthState();
@@ -115,15 +132,19 @@ const authSlice = createSlice({
         state.loading = false;
         // Handle the actual API response structure
         const response = action.payload;
-        const { user, accessToken } = response.data;
+        const { user, accessToken, profile } = response.data;
         state.user = user;
+        state.profile = profile;
         state.token = accessToken;
         state.isAuthenticated = true;
         state.error = null;
         
-        // Store token and user in localStorage
+        // Store token, user, and profile in localStorage
         localStorage.setItem('token', accessToken);
         localStorage.setItem('user', JSON.stringify(user));
+        if (profile) {
+          localStorage.setItem('profile', JSON.stringify(profile));
+        }
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -133,6 +154,7 @@ const authSlice = createSlice({
       // Logout
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
+        state.profile = null;
         state.token = null;
         state.isAuthenticated = false;
         state.error = null;
@@ -144,10 +166,12 @@ export const { clearError, setCredentials, clearCredentials, initializeAuth } = 
 
 // Selectors
 export const selectCurrentUser = (state) => state.auth.user;
+export const selectCurrentProfile = (state) => state.auth.profile;
 export const selectCurrentToken = (state) => state.auth.token;
 export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
 export const selectAuthLoading = (state) => state.auth.loading;
 export const selectAuthError = (state) => state.auth.error;
 export const selectUserType = (state) => state.auth.user?.userType;
+export const selectCollege = (state) => state.auth.profile?.college;
 
 export default authSlice.reducer;

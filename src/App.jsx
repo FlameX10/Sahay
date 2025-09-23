@@ -11,6 +11,11 @@ import BookCounselor from './Components/BookCounselor'
 import DailyCheckIn from './Components/DailyCheckIn'
 import PsychoeducationalResourceHub from './Components/PsychoeducationalResourceHub'
 import AdminDashboard from './Components/AdminDashboard'
+import CollegeAdminDashboard from './Components/CollegeAdminDashboard'
+import CollegeStudentReports from './Components/CollegeStudentReports'
+import CollegeCounselingSessions from './Components/CollegeCounselingSessions'
+import CollegeResources from './Components/CollegeResources'
+import CollegeSettings from './Components/CollegeSettings'
 import ManageCounselors from './Components/ManageCounselors'
 import PeerSupportManagement from './Components/PeerSupportManagement'
 import CounselorDashboard from './Components/CounsellorDashboard'
@@ -86,33 +91,58 @@ function App() {
             <MainAdmin />
           </ProtectedRoute>
         } />
-        <Route path="/admin/dashboard" element={
-          <ProtectedRoute allowedRoles={['admin']}>
-            <AdminDashboard />
-          </ProtectedRoute>
-        } />
-        <Route path="/admin/counselors" element={
-          <ProtectedRoute allowedRoles={['admin']}>
-            <ManageCounselors />
-          </ProtectedRoute>
-        } />
-        <Route path="/admin/peer-support" element={
-          <ProtectedRoute allowedRoles={['admin']}>
-            <PeerSupportManagement />
-          </ProtectedRoute>
-        } />
-        <Route path="/admin/analytics" element={
-          <ProtectedRoute allowedRoles={['admin']}>
-            <AdminAnalyticsDashboard />
-          </ProtectedRoute>
-        } />
-        
-        {/* Protected College Admin Routes */}
-        <Route path="/institution/dashboard" element={
+        <Route path="/collage_admin/dashboard" element={
           <ProtectedRoute allowedRoles={['collage_admin']}>
             <AdminDashboard />
           </ProtectedRoute>
         } />
+        <Route path="/collage_admin/counselors" element={
+          <ProtectedRoute allowedRoles={['collage_admin']}>
+            <ManageCounselors />
+          </ProtectedRoute>
+        } />
+        <Route path="/collage_admin/peer-support" element={
+          <ProtectedRoute allowedRoles={['collage_admin']}>
+            <PeerSupportManagement />
+          </ProtectedRoute>
+        } />
+        <Route path="/collage_admin/analytics" element={
+          <ProtectedRoute allowedRoles={['collage_admin']}>
+            <AdminAnalyticsDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/collage_admin" element={
+          <ProtectedRoute allowedRoles={['collage_admin']}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        } />
+        
+        {/* Protected College Admin Routes */}
+        {/* <Route path="/institution/dashboard" element={
+          <ProtectedRoute allowedRoles={['collage_admin']}>
+            <CollegeAdminDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/institution/students" element={
+          <ProtectedRoute allowedRoles={['collage_admin']}>
+            <CollegeStudentReports />
+          </ProtectedRoute>
+        } />
+        <Route path="/institution/sessions" element={
+          <ProtectedRoute allowedRoles={['collage_admin']}>
+            <CollegeCounselingSessions />
+          </ProtectedRoute>
+        } />
+        <Route path="/institution/resources" element={
+          <ProtectedRoute allowedRoles={['collage_admin']}>
+            <CollegeResources />
+          </ProtectedRoute>
+        } />
+        <Route path="/institution/settings" element={
+          <ProtectedRoute allowedRoles={['collage_admin']}>
+            <CollegeSettings />
+          </ProtectedRoute>
+        } /> */}
         
         {/* Protected Counsellor Routes */}
         <Route path="/counsellor" element={

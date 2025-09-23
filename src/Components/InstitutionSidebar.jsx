@@ -19,12 +19,12 @@ const InstitutionSidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const location = useLocation();
   const { pathname } = location;
 
-  // Navigation items, 'Settings' is handled separately at the bottom
+  // Navigation items for college admin - limited to their institution
   const sidebarItems = [
-    { icon: BarChart3, label: 'Dashboard', href: '/admin/dashboard' },
-    { icon: UserPlus, label: 'Manage Counselors', href: '/admin/counselors' },
-    { icon: MessageSquare, label: 'Peer Support', href: '/admin/peer-support' },
-    { icon: Users, label: 'Student Analytics', href: '/admin/analytics' },
+    { icon: BarChart3, label: 'Dashboard', href: '/collage_admin/dashboard' },
+    { icon: UserPlus, label: 'Manage Counselors', href: '/collage_admin/counselors' },
+    { icon: MessageSquare, label: 'Peer Support', href: '/collage_admin/peer-support' },
+    { icon: Users, label: 'Student Analytics', href: '/collage_admin/analytics' },
   ];
 
   const handleNavigate = (path) => {
@@ -101,9 +101,9 @@ const InstitutionSidebar = ({ sidebarOpen, setSidebarOpen }) => {
            <ul className="space-y-2">
               <li>
                 <button
-                    onClick={() => handleNavigate('/admin/settings')}
+                    onClick={() => handleNavigate('/collage_admin/settings')}
                     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-left ${
-                        pathname === '/admin/settings'
+                        pathname === '/collage_admin/settings'
                         ? 'bg-[#2dc8ca] text-white'
                         : 'text-[#767272] hover:bg-[#f2f7eb] hover:text-[#2e2f34]'
                     }`}
@@ -137,4 +137,3 @@ const InstitutionSidebar = ({ sidebarOpen, setSidebarOpen }) => {
 };
 
 export default InstitutionSidebar;
-
