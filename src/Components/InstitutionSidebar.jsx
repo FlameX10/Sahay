@@ -1,5 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { logoutUser } from '../store/slices/authSlice';
 import { 
   Heart, 
   Building,
@@ -18,6 +20,7 @@ const InstitutionSidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { pathname } = location;
+  const dispatch = useDispatch();
 
   // Navigation items for college admin - limited to their institution
   const sidebarItems = [
@@ -32,6 +35,32 @@ const InstitutionSidebar = ({ sidebarOpen, setSidebarOpen }) => {
     // On smaller screens, close the sidebar after navigation
     if (window.innerWidth < 1024) { 
         setSidebarOpen(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      // Clear all localStorage items
+      localStorage.clear();
+      
+      // Clear all cookies
+      document.cookie.split(";").forEach((c) => {
+        const eqPos = c.indexOf("=");
+        const name = eqPos > -1 ? c.substr(0, eqPos) : c;
+        document.cookie = `${name.trim()}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+        document.cookie = `${name.trim()}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`;
+        document.cookie = `${name.trim()}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=.${window.location.hostname}`;
+      });
+
+      // Dispatch logout action to clear Redux state
+      dispatch(logoutUser());
+      
+      // Navigate to login page
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Even if there's an error, still navigate to login
+      navigate('/');
     }
   };
 
@@ -114,7 +143,7 @@ const InstitutionSidebar = ({ sidebarOpen, setSidebarOpen }) => {
               </li>
               <li>
                  <button
-                    onClick={() => handleNavigate('/')} // Logs out and goes to login page
+                    onClick={handleLogout}
                     className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-[#ab5275] hover:bg-[#cdbdd4]"
                   >
                     <LogOut className="w-5 h-5" />

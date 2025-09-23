@@ -29,16 +29,13 @@ import { registerCounselor, fetchCounselors, clearRegistrationStatus, updateCoun
 const ManageCounselors = () => {
   const dispatch = useDispatch();
   const { counselors, loading, error, registrationSuccess, registrationError } = useSelector(state => state.counselor);
-  const { user, profile } = useSelector(state => state.auth);
+  const { user } = useSelector(state => state.auth);
   
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [specializationInput, setSpecializationInput] = useState('');
-  
-  // Get college ID from profile
-  const collegeId = profile?.college?._id;
   
   // Form state for new counselor
   const [newCounselor, setNewCounselor] = useState({
@@ -48,30 +45,17 @@ const ManageCounselors = () => {
     name: '',
     qualification: '',
     specialization: [],
-    college: collegeId || '', // Use profile college ID
+    college: user?.college || '68d127a5a910e3910b4203dc', // Use user's college or default
     contactEmail: '',
     contactPhone: ''
   });
 
   // Fetch counselors on component mount
   useEffect(() => {
-    if (collegeId) {
-      console.log('Fetching counselors for college:', collegeId);
-      dispatch(fetchCounselors(collegeId));
-    } else {
-      console.log('No college ID found in profile:', profile);
+    if (user?.college) {
+      dispatch(fetchCounselors(user.college));
     }
-  }, [dispatch, collegeId, profile]);
-
-  // Update college in form when profile changes
-  useEffect(() => {
-    if (collegeId) {
-      setNewCounselor(prev => ({
-        ...prev,
-        college: collegeId
-      }));
-    }
-  }, [collegeId]);
+  }, [dispatch, user?.college]);
 
   // Clear registration status when modal closes
   useEffect(() => {
@@ -116,20 +100,11 @@ const ManageCounselors = () => {
       return;
     }
 
-    // Ensure college ID is set
-    if (!collegeId) {
-      console.error('No college ID available');
-      return;
-    }
-
     // Set contactEmail to email if not provided
     const counselorData = {
       ...newCounselor,
-      college: collegeId, // Ensure college ID is set
       contactEmail: newCounselor.contactEmail || newCounselor.email
     };
-
-    console.log('Registering counselor with data:', counselorData);
 
     try {
       await dispatch(registerCounselor(counselorData)).unwrap();
@@ -141,14 +116,14 @@ const ManageCounselors = () => {
         name: '',
         qualification: '',
         specialization: [],
-        college: collegeId,
+        college: user?.college || '68d127a5a910e3910b4203dc',
         contactEmail: '',
         contactPhone: ''
       });
       setShowAddModal(false);
       // Refresh counselors list
-      if (collegeId) {
-        dispatch(fetchCounselors(collegeId));
+      if (user?.college) {
+        dispatch(fetchCounselors(user.college));
       }
     } catch (error) {
       console.error('Failed to register counselor:', error);
@@ -166,18 +141,6 @@ const ManageCounselors = () => {
       console.error('Failed to update counselor status:', error);
     }
   };
-
-  // Add a loading state check
-  if (!collegeId && profile !== null) {
-    return (
-      <div className="flex min-h-screen bg-[#eaf1f5] items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-[#2dc8ca] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-[#767272]">Loading college information...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex min-h-screen bg-[#eaf1f5]">
@@ -199,9 +162,7 @@ const ManageCounselors = () => {
               </button>
               <div>
                 <h2 className="text-2xl font-bold text-[#2e2f34]">Manage Counselors</h2>
-                <p className="text-base text-[#767272]">
-                  {profile?.college?.name && `Add, edit, and monitor counselors for ${profile.college.name}`}
-                </p>
+                <p className="text-base text-[#767272]">Add, edit, and monitor counselor availability</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
@@ -212,9 +173,7 @@ const ManageCounselors = () => {
                 </span>
               </button>
               <div className="w-10 h-10 bg-[#7d7074] rounded-lg flex items-center justify-center cursor-pointer">
-                <span className="text-white font-bold text-sm">
-                  {profile?.profile?.name?.[0]?.toUpperCase() || 'A'}
-                </span>
+                <span className="text-white font-bold text-sm">A</span>
               </div>
             </div>
           </div>

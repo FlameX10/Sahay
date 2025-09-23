@@ -1,5 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { logoutUser } from '../store/slices/authSlice';
 import { 
   BarChart3, 
   Heart, 
@@ -21,6 +23,7 @@ const Sidebar = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const menuItems = [
     { id: 'dashboard', icon: BarChart3, label: 'Dashboard', color: 'bg-[#3d9098]', path: '/dashboard' },
     { id: 'assessment', icon: Heart, label: 'Self Assessment', color: 'bg-[#f99c5b]', path: '/assessmentFlow' },
@@ -31,6 +34,32 @@ const Sidebar = ({
     { id: 'meditation', icon: Brain, label: 'Meditation', color: 'bg-[#a0b4bb]', path: '/meditation' },
     { id: 'exercise', icon: Calendar, label: 'Exercise', color: 'bg-[#fbecb3]', path: '/exercise' },
   ];
+
+  const handleLogout = async () => {
+    try {
+      // Clear all localStorage items
+      localStorage.clear();
+      
+      // Clear all cookies
+      document.cookie.split(";").forEach((c) => {
+        const eqPos = c.indexOf("=");
+        const name = eqPos > -1 ? c.substr(0, eqPos) : c;
+        document.cookie = `${name.trim()}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+        document.cookie = `${name.trim()}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`;
+        document.cookie = `${name.trim()}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=.${window.location.hostname}`;
+      });
+
+      // Dispatch logout action to clear Redux state
+      dispatch(logoutUser());
+      
+      // Navigate to login page
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Even if there's an error, still navigate to login
+      navigate('/');
+    }
+  };
 
   return (
     <>
@@ -97,7 +126,7 @@ const Sidebar = ({
             </div>
             <span className="font-medium">Settings</span>
           </button>
-          <button className="w-full flex items-center space-x-3 px-4 py-3 text-[#ab5275] hover:bg-[#cdbdd4] rounded-xl transition-colors" onClick={()=>navigate('/')}>
+          <button className="w-full flex items-center space-x-3 px-4 py-3 text-[#ab5275] hover:bg-[#cdbdd4] rounded-xl transition-colors" onClick={handleLogout}>
             <div className="w-8 h-8 bg-[#f38788] rounded-lg flex items-center justify-center">
               <LogOut className="w-4 h-4 text-white" />
             </div>
