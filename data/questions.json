@@ -1,0 +1,86 @@
+{
+  "PHQ9": [
+    {
+      "id": "PHQ9_Q1",
+      "original": "Little interest or pleasure in doing things?",
+      "variants": [
+        { "text": "Since exams started, have you stopped enjoying things you used to love?", "context": ["academic"] },
+        { "text": "Have you been skipping hangouts because nothing feels fun anymore?", "context": ["social"] }
+      ]
+    },
+    {
+      "id": "PHQ9_Q2",
+      "original": "Feeling down, depressed, or hopeless?",
+      "variants": [
+        { "text": "With everything going on, have you been feeling really down or hopeless?", "context": ["general"] },
+        { "text": "With your family pressuring you, have you felt crushed or without hope?", "context": ["family", "pressure"] }
+      ]
+    },
+    {
+      "id": "PHQ9_Q3",
+      "original": "Trouble falling or staying asleep, or sleeping too much?",
+      "variants": [
+        { "text": "With exam stress, are you having trouble sleeping or sleeping too much?", "context": ["academic"] },
+        { "text": "Are you staying up all night worrying or sleeping the whole day?", "context": ["self_worth"] }
+      ]
+    },
+    {
+      "id": "PHQ9_Q4",
+      "original": "Feeling tired or having little energy?",
+      "variants": [
+        { "text": "Even after rest, do you feel exhausted from all the pressure?", "context": ["academic", "family"] },
+        { "text": "Do you feel drained even when you haven't done much?", "context": ["general"] }
+      ]
+    },
+    {
+      "id": "PHQ9_Q5",
+      "original": "Poor appetite or overeating?",
+      "variants": [
+        { "text": "Are you stress-eating or completely losing your appetite?", "context": ["academic"] },
+        { "text": "Has your eating pattern changed because of how you're feeling?", "context": ["general"] }
+      ]
+    },
+    {
+      "id": "PHQ9_Q6",
+      "original": "Feeling bad about yourself or that you are a failure or have let yourself or your family down?",
+      "variants": [
+        { "text": "Do you feel like you're disappointing everyone, especially your family?", "context": ["family"] },
+        { "text": "Are you constantly thinking you're not good enough or a failure?", "context": ["self_worth"] }
+      ]
+    },
+    {
+      "id": "PHQ9_Q7",
+      "original": "Trouble concentrating on things, such as reading the newspaper or watching television?",
+      "variants": [
+        { "text": "Is it hard to focus on studying or even simple things like watching TV?", "context": ["academic"] },
+        { "text": "Do you find your mind wandering when trying to concentrate?", "context": ["general"] }
+      ]
+    },
+    {
+      "id": "PHQ9_Q8",
+      "original": "Moving or speaking so slowly that other people could have noticed? Or the opposite - being so fidgety or restless that you have been moving around a lot more than usual?",
+      "variants": [
+        { "text": "Are you either moving really slowly or feeling super restless and fidgety?", "context": ["general"] },
+        { "text": "Have others noticed you acting unusually slow or hyperactive?", "context": ["social"] }
+      ]
+    },
+    {
+      "id": "PHQ9_Q9",
+      "original": "Thoughts that you would be better off dead, or of hurting yourself?",
+      "variants": [
+        { "text": "Have you had thoughts about not wanting to be here anymore?", "context": ["crisis"] },
+        { "text": "Are you having thoughts about ending things or hurting yourself?", "context": ["crisis"] }
+      ]
+    }
+  ],
+  "GAD7": [
+    {
+      "id": "GAD7_Q1",
+      "original": "Feeling nervous, anxious, or on edge?",
+      "variants": [
+        { "text": "Before exams, do you feel constantly on edge or restless?", "context": ["academic"] },
+        { "text": "Around people, do you feel nervous or like you’re being judged?", "context": ["social"] }
+      ]
+    }
+  ]
+}

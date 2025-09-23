@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api/v1',
+  baseURL: 'https://sahaybcakend.onrender.com/api/v1',
   withCredentials: true,
   validateStatus: (status) => {
     // Accept 2xx and 3xx status codes, including 204 (No Content) for CORS preflight

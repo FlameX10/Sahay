@@ -27,6 +27,9 @@ import MainAdmin from './Components/MainAdmin'
 import ProtectedRoute from './Components/ProtectedRoute'
 import PublicRoute from './Components/PublicRoute'
 import { initializeAuth } from './store/slices/authSlice'
+import AssessmentFlow from './Components/AssessmentFlow';
+import Chatbot from './Components/Chatbot';
+
 function App() {
   const dispatch = useDispatch();
 
@@ -162,6 +165,23 @@ function App() {
             <Sahay />
           </ProtectedRoute>
         } />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/dashboard" element={<Sahay />} />
+        <Route path="/booking" element={<BookCounselor />} />
+        <Route path="/assessmentFlow" element={<AssessmentFlow />} />
+        <Route path="/chatbot" element={<Chatbot />} />
+        <Route path="/resources" element={<PsychoeducationalResourceHub />} />
+        <Route path="/checkin" element={<DailyCheckIn />} />
+        <Route path="/community" element={<PeerSupport />} />
+        <Route path="/meditation" element={<Meditation />} />
+        <Route path="/exercise" element={<Exercise />} />
+        {/* Admin Side */}
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/counselors" element={<ManageCounselors />} />
+        <Route path="/admin/peer-support" element={<PeerSupportManagement />} />
+        <Route path="/admin/analytics" element={<AdminAnalyticsDashboard />} />
+        <Route path="/counsellor" element={<CounselorDashboard />} />
+        <Route path="/admin" element={<MainAdmin/>} />
       </Routes>
     </Router>
   )

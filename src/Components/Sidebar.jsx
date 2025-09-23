@@ -23,7 +23,7 @@ const Sidebar = ({
   const location = useLocation();
   const menuItems = [
     { id: 'dashboard', icon: BarChart3, label: 'Dashboard', color: 'bg-[#3d9098]', path: '/dashboard' },
-    { id: 'assessment', icon: Heart, label: 'Self Assessment', color: 'bg-[#f99c5b]', path: '/assessment' },
+    { id: 'assessment', icon: Heart, label: 'Self Assessment', color: 'bg-[#f99c5b]', path: '/assessmentFlow' },
     { id: 'resources', icon: BookOpen, label: 'Resources', color: 'bg-[#cab2cb]', path: '/resources' },
     { id: 'chatbot', icon: MessageCircle, label: 'AI Support', color: 'bg-[#9ea9a9]', path: '/chatbot' },
     { id: 'booking', icon: Calendar, label: 'Book Counselor', color: 'bg-[#d8c1ad]', path: '/booking' },
