@@ -25,7 +25,7 @@ const Sidebar = ({
   const location = useLocation();
   const dispatch = useDispatch();
   const menuItems = [
-    { id: 'dashboard', icon: BarChart3, label: 'Dashboard', color: 'bg-[#3d9098]', path: '/dashboard' },
+    { id: 'dashboard', icon: BarChart3, label: 'Dashboard$', color: 'bg-[#3d9098]', path: '/dashboard' },
     { id: 'assessment', icon: Heart, label: 'Self Assessment', color: 'bg-[#f99c5b]', path: '/assessmentFlow' },
     { id: 'resources', icon: BookOpen, label: 'Resources', color: 'bg-[#cab2cb]', path: '/resources' },
     { id: 'chatbot', icon: MessageCircle, label: 'AI Support', color: 'bg-[#9ea9a9]', path: '/chatbot' },
